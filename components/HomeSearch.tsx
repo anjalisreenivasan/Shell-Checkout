@@ -20,15 +20,16 @@ export default function HomeSearch() {
   }
 
   return (
-    <form onSubmit={handleSearch} className="flex gap-2 max-w-md mx-auto">
+    <form onSubmit={handleSearch} className="flex gap-2 max-w-lg">
       <Input
-        placeholder="Search for an item..."
+        placeholder="Search for an item to check out..."
         value={query}
         onChange={e => setQuery(e.target.value)}
-        className="flex-1"
+        className="flex-1 h-11 text-base"
       />
-      <Button type="submit" className="bg-orange-600 hover:bg-orange-700 text-white">
-        <Search className="w-4 h-4" />
+      <Button type="submit" className="bg-orange-600 hover:bg-orange-700 text-white h-11 px-5">
+        <Search className="w-4 h-4 mr-1" />
+        Search
       </Button>
     </form>
   )
