@@ -86,42 +86,42 @@ export default function BoardItemsPage() {
 
   if (loading) {
     return (
-      <div className="text-center py-24 text-gray-300">
-        <div className="w-5 h-5 border-2 border-gray-300 border-t-orange-600 rounded-full animate-spin mx-auto mb-3" />
+      <div className="text-center py-24 text-shell-black/20">
+        <div className="w-5 h-5 border-2 border-shell-black/20 border-t-shell-red rounded-full animate-spin mx-auto mb-3" />
         <p className="text-sm">Loading items...</p>
       </div>
     )
   }
 
   return (
-    <div className="space-y-6 max-w-2xl">
+    <div className="space-y-6 max-w-2xl mx-auto">
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-gray-800">Items</h2>
-        <Button onClick={() => setShowForm(true)} size="sm" className="bg-orange-600 hover:bg-orange-700 text-white gap-1.5">
+        <h2 className="text-lg font-semibold text-shell-black">Items</h2>
+        <Button onClick={() => setShowForm(true)} size="sm" className="bg-shell-red hover:bg-shell-red-dark text-white gap-1.5">
           <Plus className="w-3.5 h-3.5" /> Add Item
         </Button>
       </div>
 
       {showForm && (
-        <div className="bg-white rounded-xl border border-orange-200 p-5 space-y-4">
-          <span className="text-sm font-medium text-gray-800">New Item</span>
+        <div className="bg-white rounded-xl border border-shell-red/20 p-5 space-y-4">
+          <span className="text-sm font-medium text-shell-black">New Item</span>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div className="space-y-1.5">
-              <Label className="text-sm text-gray-600">Name <span className="text-red-500">*</span></Label>
+              <Label className="text-sm text-shell-black/60">Name <span className="text-shell-red">*</span></Label>
               <Input placeholder="e.g. DSLR Camera" {...register('name')} />
-              {errors.name && <p className="text-xs text-red-500">{errors.name.message}</p>}
+              {errors.name && <p className="text-xs text-shell-red">{errors.name.message}</p>}
             </div>
             <div className="space-y-1.5">
-              <Label className="text-sm text-gray-600">Description</Label>
+              <Label className="text-sm text-shell-black/60">Description</Label>
               <Textarea placeholder="Optional description..." {...register('description')} rows={2} />
             </div>
             <div className="space-y-1.5">
-              <Label className="text-sm text-gray-600">Quantity <span className="text-red-500">*</span></Label>
+              <Label className="text-sm text-shell-black/60">Quantity <span className="text-shell-red">*</span></Label>
               <Input type="number" min={1} {...register('quantity', { valueAsNumber: true })} className="w-20" />
-              {errors.quantity && <p className="text-xs text-red-500">{errors.quantity.message}</p>}
+              {errors.quantity && <p className="text-xs text-shell-red">{errors.quantity.message}</p>}
             </div>
             <div className="flex gap-2 pt-1">
-              <Button type="submit" disabled={submitting} size="sm" className="bg-orange-600 hover:bg-orange-700 text-white">
+              <Button type="submit" disabled={submitting} size="sm" className="bg-shell-red hover:bg-shell-red-dark text-white">
                 {submitting ? 'Adding...' : 'Add Item'}
               </Button>
               <Button type="button" size="sm" variant="outline" onClick={() => { setShowForm(false); reset() }}>
@@ -133,17 +133,17 @@ export default function BoardItemsPage() {
       )}
 
       {items.length === 0 ? (
-        <div className="text-center py-24 text-gray-300">
+        <div className="text-center py-24 text-shell-black/20">
           <Package className="w-8 h-8 mx-auto mb-2" />
           <p className="text-sm">No items yet.</p>
         </div>
       ) : (
-        <div className="divide-y divide-gray-100 rounded-xl border border-gray-200 bg-white overflow-hidden">
+        <div className="divide-y divide-shell-black/5 rounded-xl border border-shell-black/10 bg-white overflow-hidden">
           {items.map(item => (
             <div key={item.id} className="flex items-center justify-between gap-4 px-4 py-3.5">
               <div className="min-w-0 space-y-0.5">
                 <div className="flex items-center gap-2">
-                  <span className="font-medium text-sm text-gray-900 truncate">{item.name}</span>
+                  <span className="font-medium text-sm text-shell-black truncate">{item.name}</span>
                   <Badge
                     variant="outline"
                     className={`text-[10px] shrink-0 ${item.is_available
@@ -153,7 +153,7 @@ export default function BoardItemsPage() {
                     {item.is_available ? 'Available' : 'Unavailable'}
                   </Badge>
                 </div>
-                {item.description && <p className="text-xs text-gray-400 truncate">{item.description}</p>}
+                {item.description && <p className="text-xs text-shell-black/40 truncate">{item.description}</p>}
               </div>
               <div className="flex items-center gap-1.5 shrink-0">
                 <Button size="sm" variant="outline" className="text-xs h-7" onClick={() => toggleAvailability(item)}>
@@ -178,8 +178,8 @@ export default function BoardItemsPage() {
           <DialogHeader>
             <DialogTitle>Remove Item</DialogTitle>
           </DialogHeader>
-          <p className="text-sm text-gray-500">
-            Remove <span className="font-medium text-gray-700">{deleteTarget?.name}</span>? History will be preserved.
+          <p className="text-sm text-shell-black/50">
+            Remove <span className="font-medium text-shell-black">{deleteTarget?.name}</span>? History will be preserved.
           </p>
           <DialogFooter>
             <Button variant="outline" onClick={() => setDeleteTarget(null)}>Cancel</Button>

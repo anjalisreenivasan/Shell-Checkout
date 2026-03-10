@@ -10,9 +10,11 @@ export default async function BoardLayout({ children }: { children: React.ReactN
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900">Board Dashboard</h1>
-        <BoardNav />
+      <div className="text-center">
+        <h1 className="text-2xl font-bold text-shell-black">Board Dashboard</h1>
+        <div className="flex justify-center">
+          <BoardNav />
+        </div>
       </div>
       {children}
     </div>

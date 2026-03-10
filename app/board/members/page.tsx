@@ -39,41 +39,41 @@ export default function BoardMembersPage() {
 
   if (loading) {
     return (
-      <div className="text-center py-24 text-gray-300">
-        <div className="w-5 h-5 border-2 border-gray-300 border-t-orange-600 rounded-full animate-spin mx-auto mb-3" />
+      <div className="text-center py-24 text-shell-black/20">
+        <div className="w-5 h-5 border-2 border-shell-black/20 border-t-shell-red rounded-full animate-spin mx-auto mb-3" />
         <p className="text-sm">Loading members...</p>
       </div>
     )
   }
 
   return (
-    <div className="space-y-4 max-w-2xl">
-      <h2 className="text-lg font-semibold text-gray-800">Members</h2>
-      <div className="divide-y divide-gray-100 rounded-xl border border-gray-200 bg-white overflow-hidden">
+    <div className="space-y-4 max-w-2xl mx-auto">
+      <h2 className="text-lg font-semibold text-shell-black">Members</h2>
+      <div className="divide-y divide-shell-black/5 rounded-xl border border-shell-black/10 bg-white overflow-hidden">
         {shellers.map(sheller => (
           <div key={sheller.id} className="flex items-center justify-between gap-4 px-4 py-3.5">
             <div className="flex items-center gap-3 min-w-0">
               <Avatar className="w-8 h-8 shrink-0">
-                <AvatarFallback className="bg-orange-50 text-orange-600 text-xs font-semibold">
+                <AvatarFallback className="bg-shell-red/10 text-shell-red text-xs font-semibold">
                   {sheller.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
               <div className="min-w-0">
                 <div className="flex items-center gap-2">
-                  <span className="text-sm font-medium text-gray-900 truncate">{sheller.name}</span>
+                  <span className="text-sm font-medium text-shell-black truncate">{sheller.name}</span>
                   {sheller.is_board_member && (
-                    <Badge variant="outline" className="bg-orange-50 text-orange-600 border-orange-200 text-[10px]">
+                    <Badge variant="outline" className="bg-shell-red/10 text-shell-red border-shell-red/20 text-[10px]">
                       Board
                     </Badge>
                   )}
                 </div>
-                <p className="text-xs text-gray-400 truncate">{sheller.email}</p>
+                <p className="text-xs text-shell-black/40 truncate">{sheller.email}</p>
               </div>
             </div>
             <Button
               size="sm"
               variant="outline"
-              className={`text-xs shrink-0 ${!sheller.is_board_member ? 'bg-orange-600 hover:bg-orange-700 text-white border-orange-600' : ''}`}
+              className={`text-xs shrink-0 ${!sheller.is_board_member ? 'bg-shell-red hover:bg-shell-red-dark text-white border-shell-red' : ''}`}
               onClick={() => toggleBoard(sheller)}
             >
               {sheller.is_board_member ? 'Remove' : 'Make Board'}

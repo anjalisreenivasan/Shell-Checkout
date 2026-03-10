@@ -17,7 +17,7 @@ const STATUS_COLORS: Record<string, string> = {
   approved: 'bg-green-50 text-green-700 border-green-200',
   denied: 'bg-red-50 text-red-600 border-red-200',
   returned: 'bg-blue-50 text-blue-700 border-blue-200',
-  return_confirmed: 'bg-gray-50 text-gray-600 border-gray-200',
+  return_confirmed: 'bg-shell-black/5 text-shell-black/60 border-shell-black/10',
 }
 
 export default function BoardRequestsPage() {
@@ -99,21 +99,21 @@ export default function BoardRequestsPage() {
 
   if (loading) {
     return (
-      <div className="text-center py-24 text-gray-300">
-        <div className="w-5 h-5 border-2 border-gray-300 border-t-orange-600 rounded-full animate-spin mx-auto mb-3" />
+      <div className="text-center py-24 text-shell-black/20">
+        <div className="w-5 h-5 border-2 border-shell-black/20 border-t-shell-red rounded-full animate-spin mx-auto mb-3" />
         <p className="text-sm">Loading requests...</p>
       </div>
     )
   }
 
   const renderCheckout = (c: Checkout, actions: React.ReactNode) => (
-    <div key={c.id} className="bg-white rounded-xl border border-gray-200 p-5 space-y-3">
+    <div key={c.id} className="bg-white rounded-xl border border-shell-black/10 p-5 space-y-3">
       <div className="flex items-start justify-between gap-2 flex-wrap">
         <div className="space-y-1">
-          <span className="font-medium text-gray-900">
+          <span className="font-medium text-shell-black">
             {(c.item as { name: string })?.name ?? 'Unknown Item'}
           </span>
-          <div className="flex items-center gap-3 text-xs text-gray-400">
+          <div className="flex items-center gap-3 text-xs text-shell-black/40">
             <span className="flex items-center gap-1">
               <User className="w-3 h-3" />
               {(c.sheller as { name: string })?.name}
@@ -129,13 +129,13 @@ export default function BoardRequestsPage() {
         </Badge>
       </div>
 
-      <div className="flex flex-col gap-1 text-sm text-gray-500">
+      <div className="flex flex-col gap-1 text-sm text-shell-black/50">
         <span className="flex items-center gap-2">
-          <Calendar className="w-3.5 h-3.5 text-gray-300" />
+          <Calendar className="w-3.5 h-3.5 text-shell-black/20" />
           Checked out {formatNY(c.checkout_at)}
         </span>
         <span className="flex items-center gap-2">
-          <Clock className="w-3.5 h-3.5 text-gray-300" />
+          <Clock className="w-3.5 h-3.5 text-shell-black/20" />
           Due {formatDate(c.return_date)} at {formatTime(c.return_time)}
         </span>
       </div>
@@ -144,15 +144,15 @@ export default function BoardRequestsPage() {
         {c.contract_url ? (
           <button
             onClick={() => handleViewContract(c.id)}
-            className="inline-flex items-center gap-1 text-orange-600 hover:text-orange-700 font-medium"
+            className="inline-flex items-center gap-1 text-shell-red hover:text-shell-red-dark font-medium"
           >
             <FileText className="w-3.5 h-3.5" />
             View contract
           </button>
         ) : (
-          <span className="text-gray-300 italic">No contract</span>
+          <span className="text-shell-black/20 italic">No contract</span>
         )}
-        <span className="text-gray-200">|</span>
+        <span className="text-shell-black/10">|</span>
         <span className={c.rental_consent ? 'text-green-600' : 'text-red-400'}>
           {c.rental_consent ? 'Agreed to terms' : 'No consent'}
         </span>
@@ -163,7 +163,7 @@ export default function BoardRequestsPage() {
   )
 
   return (
-    <div className="space-y-4 max-w-3xl">
+    <div className="space-y-4 max-w-3xl mx-auto">
       <Tabs defaultValue="pending">
         <TabsList>
           <TabsTrigger value="pending">Pending ({pending.length})</TabsTrigger>
@@ -173,7 +173,7 @@ export default function BoardRequestsPage() {
 
         <TabsContent value="pending" className="space-y-3 mt-4">
           {pending.length === 0 ? (
-            <div className="text-center py-16 text-gray-300 text-sm">No pending requests.</div>
+            <div className="text-center py-16 text-shell-black/20 text-sm">No pending requests.</div>
           ) : pending.map(c => renderCheckout(c, <>
             <Button size="sm" onClick={() => updateStatus(c.id, 'approved')} className="gap-1.5 bg-green-600 hover:bg-green-700 text-white">
               <Check className="w-3.5 h-3.5" /> Approve
@@ -189,7 +189,7 @@ export default function BoardRequestsPage() {
 
         <TabsContent value="active" className="space-y-3 mt-4">
           {active.length === 0 ? (
-            <div className="text-center py-16 text-gray-300 text-sm">No active checkouts.</div>
+            <div className="text-center py-16 text-shell-black/20 text-sm">No active checkouts.</div>
           ) : active.map(c => renderCheckout(c, <>
             <Button size="sm" variant="outline" onClick={() => { setEditTarget(c); setEditDate(c.return_date); setEditTime(c.return_time) }} className="gap-1.5">
               <Pencil className="w-3.5 h-3.5" /> Edit Dates
@@ -199,7 +199,7 @@ export default function BoardRequestsPage() {
 
         <TabsContent value="returns" className="space-y-3 mt-4">
           {awaitingReturn.length === 0 ? (
-            <div className="text-center py-16 text-gray-300 text-sm">No returns awaiting confirmation.</div>
+            <div className="text-center py-16 text-shell-black/20 text-sm">No returns awaiting confirmation.</div>
           ) : awaitingReturn.map(c => renderCheckout(c, <>
             <Button size="sm" onClick={() => handleConfirmReturn(c)} className="gap-1.5 bg-blue-600 hover:bg-blue-700 text-white">
               <RotateCcw className="w-3.5 h-3.5" /> Confirm Return
@@ -215,17 +215,17 @@ export default function BoardRequestsPage() {
           </DialogHeader>
           <div className="space-y-4 py-2">
             <div className="space-y-1.5">
-              <Label className="text-sm text-gray-600">Return Date</Label>
+              <Label className="text-sm text-shell-black/60">Return Date</Label>
               <Input type="date" value={editDate} onChange={e => setEditDate(e.target.value)} />
             </div>
             <div className="space-y-1.5">
-              <Label className="text-sm text-gray-600">Return Time</Label>
+              <Label className="text-sm text-shell-black/60">Return Time</Label>
               <Input type="time" value={editTime} onChange={e => setEditTime(e.target.value)} />
             </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setEditTarget(null)}>Cancel</Button>
-            <Button disabled={saving} onClick={handleEditDates} className="bg-orange-600 hover:bg-orange-700 text-white">
+            <Button disabled={saving} onClick={handleEditDates} className="bg-shell-red hover:bg-shell-red-dark text-white">
               {saving ? 'Saving...' : 'Save'}
             </Button>
           </DialogFooter>

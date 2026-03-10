@@ -58,10 +58,10 @@ function NavbarInner() {
       key={href}
       href={href}
       onClick={() => setMobileOpen(false)}
-      className={`text-sm font-medium transition-colors hover:text-orange-600 ${
+      className={`text-sm font-medium transition-colors hover:text-shell-red ${
         pathname === href
-          ? 'text-orange-600'
-          : 'text-gray-500'
+          ? 'text-shell-red'
+          : 'text-shell-black/50'
       }`}
     >
       {label}
@@ -69,12 +69,12 @@ function NavbarInner() {
   )
 
   return (
-    <nav className="bg-white/80 backdrop-blur-md border-b border-gray-100 sticky top-0 z-50">
+    <nav className="bg-shell-cream/80 backdrop-blur-md border-b border-shell-black/5 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-14">
           <Link href="/" className="flex items-center gap-1.5">
-            <span className="text-lg font-bold text-orange-600">Shell</span>
-            <span className="text-lg font-semibold text-gray-800">Checkout</span>
+            <span className="text-lg font-bold text-shell-red">Shell</span>
+            <span className="text-lg font-semibold text-shell-black">Checkout</span>
           </Link>
 
           <div className="hidden sm:flex items-center gap-8">
@@ -86,13 +86,13 @@ function NavbarInner() {
               <UserButton />
             ) : (
               <SignInButton mode="modal">
-                <Button size="sm" className="bg-orange-600 hover:bg-orange-700 text-white shadow-sm">
+                <Button size="sm" className="bg-shell-red hover:bg-shell-red-dark text-white shadow-sm">
                   Sign In
                 </Button>
               </SignInButton>
             )}
             <button
-              className="sm:hidden p-1.5 text-gray-500 hover:text-gray-700"
+              className="sm:hidden p-1.5 text-shell-black/50 hover:text-shell-black"
               onClick={() => setMobileOpen(!mobileOpen)}
             >
               <Menu className="w-5 h-5" />
@@ -101,7 +101,7 @@ function NavbarInner() {
         </div>
 
         {mobileOpen && (
-          <div className="sm:hidden flex flex-col gap-3 pb-4 pt-1 border-t border-gray-100 mt-1">
+          <div className="sm:hidden flex flex-col gap-3 pb-4 pt-1 border-t border-shell-black/5 mt-1">
             {links.map(l => navLink(l.href, l.label))}
           </div>
         )}

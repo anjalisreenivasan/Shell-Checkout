@@ -47,8 +47,8 @@ export default async function ItemDetailPage({
   if (!item) notFound()
 
   return (
-    <div className="space-y-8 max-w-3xl">
-      <Link href="/items" className="inline-flex items-center gap-1.5 text-sm text-gray-400 hover:text-gray-600 transition-colors">
+    <div className="space-y-8 max-w-3xl mx-auto">
+      <Link href="/items" className="inline-flex items-center gap-1.5 text-sm text-shell-black/40 hover:text-shell-black/70 transition-colors">
         <ArrowLeft className="w-3.5 h-3.5" />
         Back to items
       </Link>
@@ -56,7 +56,7 @@ export default async function ItemDetailPage({
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
         <div className="space-y-2">
           <div className="flex items-center gap-3">
-            <h1 className="text-2xl font-bold text-gray-900">{item.name}</h1>
+            <h1 className="text-2xl font-bold text-shell-black">{item.name}</h1>
             <Badge
               variant="outline"
               className={`text-xs ${
@@ -68,8 +68,8 @@ export default async function ItemDetailPage({
               {item.is_available ? 'Available' : 'Unavailable'}
             </Badge>
           </div>
-          <p className="text-sm text-gray-400">{item.description ?? 'No description.'}</p>
-          <p className="text-xs text-gray-400">Quantity: {item.quantity}</p>
+          <p className="text-sm text-shell-black/40">{item.description ?? 'No description.'}</p>
+          <p className="text-xs text-shell-black/30">Quantity: {item.quantity}</p>
         </div>
         <div className="flex flex-col gap-2 shrink-0">
           {item.name === 'Digital Resources' && process.env.NEXT_PUBLIC_KNOWLEDGE_BASE_URL ? (
@@ -77,7 +77,7 @@ export default async function ItemDetailPage({
               href={process.env.NEXT_PUBLIC_KNOWLEDGE_BASE_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-orange-600 hover:bg-orange-700 text-white text-sm font-medium px-5 h-9 transition-colors shadow-sm"
+              className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-shell-red hover:bg-shell-red-dark text-white text-sm font-medium px-5 h-9 transition-colors shadow-sm"
             >
               <ExternalLink className="w-3.5 h-3.5" />
               Open Knowledge Base
@@ -85,7 +85,7 @@ export default async function ItemDetailPage({
           ) : (
             <Link
               href={`/checkout/${item.id}`}
-              className="inline-flex items-center justify-center rounded-lg bg-orange-600 hover:bg-orange-700 text-white text-sm font-medium px-5 h-9 transition-colors shadow-sm"
+              className="inline-flex items-center justify-center rounded-lg bg-shell-red hover:bg-shell-red-dark text-white text-sm font-medium px-5 h-9 transition-colors shadow-sm"
             >
               Request Checkout
             </Link>
@@ -93,22 +93,22 @@ export default async function ItemDetailPage({
         </div>
       </div>
 
-      <div className="bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
-        <h2 className="text-sm font-semibold text-gray-700 mb-4">Availability</h2>
+      <div className="bg-white rounded-xl border border-shell-black/10 p-5 shadow-sm">
+        <h2 className="text-sm font-semibold text-shell-black/70 mb-4">Availability</h2>
         <ItemCalendar checkouts={checkouts} blockouts={blockouts} />
       </div>
 
       {checkouts.length > 0 && (
         <div className="space-y-3">
-          <h2 className="text-sm font-semibold text-gray-700">Active Checkouts</h2>
-          <div className="divide-y divide-gray-100 rounded-xl border border-gray-200 bg-white overflow-hidden">
+          <h2 className="text-sm font-semibold text-shell-black/70">Active Checkouts</h2>
+          <div className="divide-y divide-shell-black/5 rounded-xl border border-shell-black/10 bg-white overflow-hidden">
             {checkouts.map(c => (
               <div key={c.id} className="flex items-center justify-between px-4 py-3 text-sm">
-                <span className="flex items-center gap-2 text-gray-700">
-                  <User className="w-3.5 h-3.5 text-gray-400" />
+                <span className="flex items-center gap-2 text-shell-black/70">
+                  <User className="w-3.5 h-3.5 text-shell-black/30" />
                   {(c.sheller as { name: string })?.name}
                 </span>
-                <span className="flex items-center gap-2 text-gray-400">
+                <span className="flex items-center gap-2 text-shell-black/40">
                   <Calendar className="w-3.5 h-3.5" />
                   {formatDate(c.return_date)} at {formatTime(c.return_time)}
                 </span>

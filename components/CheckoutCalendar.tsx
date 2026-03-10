@@ -34,7 +34,7 @@ export default function CheckoutCalendar({ events }: Props) {
 
   return (
     <>
-      <div className="[&_.fc]:text-sm [&_.fc-toolbar-title]:text-base [&_.fc-toolbar-title]:font-semibold [&_.fc-button-primary]:bg-orange-600 [&_.fc-button-primary]:border-orange-600 [&_.fc-button-primary]:text-xs [&_.fc-button-primary]:shadow-none [&_.fc-button-primary:hover]:bg-orange-700 [&_.fc-button-primary:not(:disabled):active]:bg-orange-700 [&_.fc-button-primary:not(:disabled).fc-button-active]:bg-orange-700 [&_.fc-day-today]:bg-orange-50/50 [&_.fc-event]:rounded-md [&_.fc-event]:px-1.5 [&_.fc-event]:cursor-pointer">
+      <div className="[&_.fc]:text-sm [&_.fc-toolbar-title]:text-base [&_.fc-toolbar-title]:font-semibold [&_.fc-button-primary]:bg-shell-red [&_.fc-button-primary]:border-shell-red [&_.fc-button-primary]:text-xs [&_.fc-button-primary]:shadow-none [&_.fc-button-primary:hover]:bg-shell-red-dark [&_.fc-button-primary:not(:disabled):active]:bg-shell-red-dark [&_.fc-button-primary:not(:disabled).fc-button-active]:bg-shell-red-dark [&_.fc-day-today]:bg-shell-red/5 [&_.fc-event]:rounded-md [&_.fc-event]:px-1.5 [&_.fc-event]:cursor-pointer">
         <FullCalendar
           plugins={[dayGridPlugin, timeGridPlugin]}
           initialView="dayGridMonth"
@@ -56,27 +56,27 @@ export default function CheckoutCalendar({ events }: Props) {
       <Dialog open={!!selected} onOpenChange={() => setSelected(null)}>
         <DialogContent className="max-w-xs">
           <DialogHeader>
-            <DialogTitle className="text-lg text-gray-900">{selected?.itemName}</DialogTitle>
+            <DialogTitle className="text-lg text-shell-black">{selected?.itemName}</DialogTitle>
           </DialogHeader>
           <div className="space-y-3 text-sm">
-            <div className="flex items-center gap-2 text-gray-600">
-              <User className="w-3.5 h-3.5 text-gray-400" />
+            <div className="flex items-center gap-2 text-shell-black/60">
+              <User className="w-3.5 h-3.5 text-shell-black/30" />
               {selected?.shellerName}
             </div>
-            <div className="flex items-center gap-2 text-gray-600">
-              <Calendar className="w-3.5 h-3.5 text-gray-400" />
+            <div className="flex items-center gap-2 text-shell-black/60">
+              <Calendar className="w-3.5 h-3.5 text-shell-black/30" />
               {selected ? formatDate(selected.returnDate) : ''}
             </div>
-            <div className="flex items-center gap-2 text-gray-600">
-              <Clock className="w-3.5 h-3.5 text-gray-400" />
+            <div className="flex items-center gap-2 text-shell-black/60">
+              <Clock className="w-3.5 h-3.5 text-shell-black/30" />
               {selected ? formatTime(selected.returnTime) : ''}
             </div>
             <Badge
               variant="outline"
               className={
                 selected?.status === 'approved'
-                  ? 'bg-orange-50 text-orange-700 border-orange-200'
-                  : 'bg-gray-50 text-gray-600 border-gray-200'
+                  ? 'bg-shell-red/10 text-shell-red border-shell-red/20'
+                  : 'bg-shell-black/5 text-shell-black/60 border-shell-black/10'
               }
             >
               {selected?.status === 'approved' ? 'Checked Out' : 'Returned'}

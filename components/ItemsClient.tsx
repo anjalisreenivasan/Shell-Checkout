@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
-import { Search, Package, ArrowRight } from 'lucide-react'
+import { Search, Package } from 'lucide-react'
 import Link from 'next/link'
 import type { Item } from '@/types'
 
@@ -26,18 +26,18 @@ export default function ItemsClient({ items, initialQuery }: Props) {
 
   return (
     <div className="space-y-6">
-      <form onSubmit={handleSearch} className="relative max-w-md">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+      <form onSubmit={handleSearch} className="relative max-w-md mx-auto">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-shell-black/30" />
         <Input
           placeholder="Search items..."
           value={query}
           onChange={e => setQuery(e.target.value)}
-          className="pl-10 h-10 bg-white border-gray-200 shadow-sm"
+          className="pl-10 h-10 bg-white border-shell-black/10 shadow-sm"
         />
       </form>
 
       {items.length === 0 ? (
-        <div className="text-center py-24 text-gray-300">
+        <div className="text-center py-24 text-shell-black/20">
           <Package className="w-10 h-10 mx-auto mb-3" />
           <p className="text-sm">No items found.</p>
         </div>
@@ -47,10 +47,10 @@ export default function ItemsClient({ items, initialQuery }: Props) {
             <Link
               key={item.id}
               href={`/items/${item.id}`}
-              className="group block bg-white rounded-xl border border-gray-200 p-4 hover:border-orange-200 hover:shadow-md transition-all"
+              className="group block bg-white rounded-xl border border-shell-black/10 p-4 hover:border-shell-red/30 hover:shadow-md transition-all"
             >
               <div className="flex items-start justify-between gap-2 mb-2">
-                <span className="font-medium text-gray-900 group-hover:text-orange-600 transition-colors">
+                <span className="font-medium text-shell-black group-hover:text-shell-red transition-colors">
                   {item.name}
                 </span>
                 <Badge
@@ -64,15 +64,10 @@ export default function ItemsClient({ items, initialQuery }: Props) {
                   {item.is_available ? 'Available' : 'Unavailable'}
                 </Badge>
               </div>
-              <p className="text-sm text-gray-400 line-clamp-2 mb-3">
+              <p className="text-sm text-shell-black/40 line-clamp-2 mb-3">
                 {item.description ?? 'No description.'}
               </p>
-              <div className="flex items-center justify-between">
-                <span className="text-xs text-gray-400">Qty: {item.quantity}</span>
-                <span className="text-xs text-orange-600 font-medium flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                  {item.name === 'Digital Resources' ? 'Details' : 'View'} <ArrowRight className="w-3 h-3" />
-                </span>
-              </div>
+              <span className="text-xs text-shell-black/30">Qty: {item.quantity}</span>
             </Link>
           ))}
         </div>

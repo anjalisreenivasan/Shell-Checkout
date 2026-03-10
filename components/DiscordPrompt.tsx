@@ -19,7 +19,7 @@ export default function DiscordPrompt({ open, onComplete }: Props) {
         <DialogHeader>
           <DialogTitle>Link your Discord</DialogTitle>
         </DialogHeader>
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-shell-black/50">
           We use Discord to notify you about your checkout requests. Sign in with Discord so we can message you when your request is approved or denied.
         </p>
         <div className="space-y-3 pt-2">
@@ -34,7 +34,7 @@ export default function DiscordPrompt({ open, onComplete }: Props) {
           </Button>
           <button
             onClick={onComplete}
-            className="w-full text-sm text-gray-400 hover:text-gray-600 transition-colors"
+            className="w-full text-sm text-shell-black/40 hover:text-shell-black/60 transition-colors"
           >
             Skip for now
           </button>

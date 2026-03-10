@@ -19,13 +19,13 @@ export default function HomeSearch() {
   }
 
   return (
-    <form onSubmit={handleSearch} className="relative max-w-lg">
-      <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+    <form onSubmit={handleSearch} className="relative w-full max-w-lg">
+      <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-shell-black/30" />
       <Input
         placeholder="Search for an item..."
         value={query}
         onChange={e => setQuery(e.target.value)}
-        className="pl-10 h-11 bg-white border-gray-200 shadow-sm focus:border-orange-300 focus:ring-orange-200"
+        className="pl-10 h-11 bg-white border-shell-black/10 shadow-sm focus:border-shell-red/40 focus:ring-shell-red/20"
       />
     </form>
   )

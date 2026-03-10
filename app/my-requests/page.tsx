@@ -14,7 +14,7 @@ const STATUS_COLORS: Record<string, string> = {
   approved: 'bg-green-50 text-green-700 border-green-200',
   denied: 'bg-red-50 text-red-600 border-red-200',
   returned: 'bg-blue-50 text-blue-700 border-blue-200',
-  return_confirmed: 'bg-gray-50 text-gray-600 border-gray-200',
+  return_confirmed: 'bg-shell-black/5 text-shell-black/60 border-shell-black/10',
 }
 
 const STATUS_LABELS: Record<string, string> = {
@@ -57,30 +57,30 @@ export default function MyRequestsPage() {
 
   if (loading) {
     return (
-      <div className="text-center py-24 text-gray-300">
-        <div className="w-5 h-5 border-2 border-gray-300 border-t-orange-600 rounded-full animate-spin mx-auto mb-3" />
+      <div className="text-center py-24 text-shell-black/20">
+        <div className="w-5 h-5 border-2 border-shell-black/20 border-t-shell-red rounded-full animate-spin mx-auto mb-3" />
         <p className="text-sm">Loading requests...</p>
       </div>
     )
   }
 
   const renderCheckout = (c: Checkout) => (
-    <div key={c.id} className="bg-white rounded-xl border border-gray-200 p-4 space-y-3">
+    <div key={c.id} className="bg-white rounded-xl border border-shell-black/10 p-4 space-y-3">
       <div className="flex items-start justify-between gap-2">
-        <span className="font-medium text-gray-900">
+        <span className="font-medium text-shell-black">
           {(c.item as { name: string })?.name ?? 'Unknown Item'}
         </span>
         <Badge variant="outline" className={`text-[10px] ${STATUS_COLORS[c.status]}`}>
           {STATUS_LABELS[c.status]}
         </Badge>
       </div>
-      <div className="flex flex-col gap-1 text-sm text-gray-500">
+      <div className="flex flex-col gap-1 text-sm text-shell-black/50">
         <span className="flex items-center gap-2">
-          <Calendar className="w-3.5 h-3.5 text-gray-300" />
+          <Calendar className="w-3.5 h-3.5 text-shell-black/20" />
           Checked out {formatNY(c.checkout_at)}
         </span>
         <span className="flex items-center gap-2">
-          <Clock className="w-3.5 h-3.5 text-gray-300" />
+          <Clock className="w-3.5 h-3.5 text-shell-black/20" />
           Due {formatDate(c.return_date)} at {formatTime(c.return_time)}
         </span>
       </div>
@@ -99,10 +99,10 @@ export default function MyRequestsPage() {
   )
 
   return (
-    <div className="space-y-6 max-w-2xl">
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900">My Requests</h1>
-        <p className="text-sm text-gray-400 mt-1">Track your checkout requests.</p>
+    <div className="space-y-6 max-w-2xl mx-auto">
+      <div className="text-center">
+        <h1 className="text-2xl font-bold text-shell-black">My Requests</h1>
+        <p className="text-sm text-shell-black/40 mt-1">Track your checkout requests.</p>
       </div>
 
       <Tabs defaultValue="active">
@@ -112,12 +112,12 @@ export default function MyRequestsPage() {
         </TabsList>
         <TabsContent value="active" className="space-y-3 mt-4">
           {active.length === 0 ? (
-            <div className="text-center py-16 text-gray-300 text-sm">No active requests.</div>
+            <div className="text-center py-16 text-shell-black/20 text-sm">No active requests.</div>
           ) : active.map(renderCheckout)}
         </TabsContent>
         <TabsContent value="history" className="space-y-3 mt-4">
           {history.length === 0 ? (
-            <div className="text-center py-16 text-gray-300 text-sm">No history yet.</div>
+            <div className="text-center py-16 text-shell-black/20 text-sm">No history yet.</div>
           ) : history.map(renderCheckout)}
         </TabsContent>
       </Tabs>

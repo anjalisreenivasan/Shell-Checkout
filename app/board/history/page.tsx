@@ -18,23 +18,23 @@ const STATUS_COLORS: Record<string, string> = {
   approved: 'bg-green-100 text-green-800 border-green-200',
   denied: 'bg-red-100 text-red-800 border-red-200',
   returned: 'bg-blue-100 text-blue-800 border-blue-200',
-  return_confirmed: 'bg-gray-100 text-gray-700 border-gray-200',
+  return_confirmed: 'bg-shell-black/5 text-shell-black/60 border-shell-black/10',
 }
 
 export default async function BoardHistoryPage() {
   const checkouts = await getAllCheckouts()
 
   return (
-    <div className="space-y-4">
-      <h2 className="text-xl font-semibold text-gray-800">Full Checkout History</h2>
+    <div className="space-y-4 max-w-4xl mx-auto">
+      <h2 className="text-xl font-semibold text-shell-black">Full Checkout History</h2>
       {checkouts.length === 0 ? (
         <Card>
-          <CardContent className="py-12 text-center text-gray-400">
+          <CardContent className="py-12 text-center text-shell-black/30">
             No checkout history yet.
           </CardContent>
         </Card>
       ) : (
-        <div className="overflow-x-auto rounded-lg border border-gray-200 bg-white">
+        <div className="overflow-x-auto rounded-lg border border-shell-black/10 bg-white">
           <Table>
             <TableHeader>
               <TableRow>
@@ -53,18 +53,18 @@ export default async function BoardHistoryPage() {
                   </TableCell>
                   <TableCell>
                     <div className="text-sm">
-                      <div className="font-medium text-gray-900">
+                      <div className="font-medium text-shell-black">
                         {(c.sheller as { name: string })?.name ?? '—'}
                       </div>
-                      <div className="text-gray-400 text-xs">
+                      <div className="text-shell-black/40 text-xs">
                         {(c.sheller as { email: string })?.email}
                       </div>
                     </div>
                   </TableCell>
-                  <TableCell className="text-sm text-gray-600">
+                  <TableCell className="text-sm text-shell-black/60">
                     {formatNY(c.checkout_at)}
                   </TableCell>
-                  <TableCell className="text-sm text-gray-600">
+                  <TableCell className="text-sm text-shell-black/60">
                     {formatDate(c.return_date)} at {formatTime(c.return_time)}
                   </TableCell>
                   <TableCell>

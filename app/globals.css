@@ -5,6 +5,10 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
+  --color-shell-cream: #fbf5f3;
+  --color-shell-red: #d74034;
+  --color-shell-red-dark: #ac3931;
+  --color-shell-black: #0f0c08;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-sans);

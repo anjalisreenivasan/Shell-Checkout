@@ -13,8 +13,8 @@ export default function Dashboard({ checkouts, blockouts }: Props) {
     title: `${(c.item as { name: string })?.name} — ${(c.sheller as { name: string })?.name}`,
     start: c.checkout_at,
     end: `${c.return_date}T${c.return_time}`,
-    backgroundColor: c.status === 'returned' ? '#d1d5db' : '#ea580c',
-    borderColor: c.status === 'returned' ? '#9ca3af' : '#c2410c',
+    backgroundColor: c.status === 'returned' ? '#d1d5db' : '#d74034',
+    borderColor: c.status === 'returned' ? '#9ca3af' : '#ac3931',
     extendedProps: {
       shellerName: (c.sheller as { name: string })?.name ?? '',
       itemName: (c.item as { name: string })?.name ?? '',
@@ -29,8 +29,8 @@ export default function Dashboard({ checkouts, blockouts }: Props) {
     title: `Blocked: ${(b.item as { name: string })?.name} — ${b.title}`,
     start: b.start_at,
     end: b.end_at,
-    backgroundColor: '#1e1e1e',
-    borderColor: '#111',
+    backgroundColor: '#0f0c08',
+    borderColor: '#0f0c08',
     extendedProps: {
       shellerName: '',
       itemName: `${(b.item as { name: string })?.name} (Blocked)`,
@@ -44,19 +44,21 @@ export default function Dashboard({ checkouts, blockouts }: Props) {
 
   return (
     <div className="space-y-10">
-      <div className="space-y-2">
-        <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-        <p className="text-sm text-gray-400">Search for a resource or see what&apos;s currently checked out.</p>
+      <div className="text-center space-y-2">
+        <h1 className="text-2xl font-bold text-shell-black">Dashboard</h1>
+        <p className="text-sm text-shell-black/40">Search for a resource or see what&apos;s currently checked out.</p>
       </div>
 
-      <HomeSearch />
+      <div className="flex justify-center">
+        <HomeSearch />
+      </div>
 
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-gray-800">Checkout Calendar</h2>
-          <div className="flex items-center gap-4 text-xs text-gray-400">
+          <h2 className="text-lg font-semibold text-shell-black">Checkout Calendar</h2>
+          <div className="flex items-center gap-4 text-xs text-shell-black/40">
             <span className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-full bg-orange-600" />
+              <span className="w-2.5 h-2.5 rounded-full bg-shell-red" />
               Checked out
             </span>
             <span className="flex items-center gap-1.5">
@@ -64,12 +66,12 @@ export default function Dashboard({ checkouts, blockouts }: Props) {
               Returned
             </span>
             <span className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-full bg-gray-900" />
+              <span className="w-2.5 h-2.5 rounded-full bg-shell-black" />
               Blocked
             </span>
           </div>
         </div>
-        <div className="bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
+        <div className="bg-white rounded-xl border border-shell-black/10 p-5 shadow-sm">
           <CheckoutCalendar events={allEvents} />
         </div>
       </div>

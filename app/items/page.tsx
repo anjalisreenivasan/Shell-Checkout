@@ -27,9 +27,9 @@ export default async function ItemsPage({
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900">Items</h1>
-        <p className="text-sm text-gray-400 mt-1">
+      <div className="text-center">
+        <h1 className="text-2xl font-bold text-shell-black">Items</h1>
+        <p className="text-sm text-shell-black/40 mt-1">
           Browse resources and request a checkout.
         </p>
       </div>
