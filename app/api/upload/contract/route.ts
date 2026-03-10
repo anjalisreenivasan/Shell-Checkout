@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
   const path = `${userId}/${Date.now()}.${ext}`
 
   const { error } = await supabaseAdmin.storage
-    .from('waivers')
+    .from('contracts')
     .upload(path, file, { contentType: file.type, upsert: false })
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })

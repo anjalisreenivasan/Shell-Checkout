@@ -34,7 +34,7 @@ export interface Checkout {
   return_time: string
   status: CheckoutStatus
   approved_by: string | null
-  waiver_url: string | null
+  contract_url: string | null
   rental_consent: boolean
   created_at: string
   updated_at: string

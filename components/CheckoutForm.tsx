@@ -18,7 +18,7 @@ const schema = z.object({
   return_date: z.string().min(1, 'Return date is required'),
   return_time: z.string().min(1, 'Return time is required'),
   rental_consent: z.boolean().refine(val => val === true, {
-    message: 'You must agree to the rental agreement',
+    message: 'You must agree to the rental terms and conditions',
   }),
 })
 
@@ -31,8 +31,8 @@ interface Props {
 export default function CheckoutForm({ item }: Props) {
   const router = useRouter()
   const [submitting, setSubmitting] = useState(false)
-  const [waiverFile, setWaiverFile] = useState<File | null>(null)
-  const [waiverUploaded, setWaiverUploaded] = useState(false)
+  const [contractFile, setContractFile] = useState<File | null>(null)
+  const [contractUploaded, setContractUploaded] = useState(false)
   const checkoutAt = nowInNY()
 
   const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
@@ -42,35 +42,33 @@ export default function CheckoutForm({ item }: Props) {
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] ?? null
-    setWaiverFile(file)
-    setWaiverUploaded(false)
+    setContractFile(file)
+    setContractUploaded(false)
   }
 
   const onSubmit = async (data: FormData) => {
-    if (!waiverFile) {
-      toast.error('Please upload your signed waiver before submitting.')
+    if (!contractFile) {
+      toast.error('Please upload your signed rental contract before submitting.')
       return
     }
 
     setSubmitting(true)
     try {
-      // Step 1: upload waiver file
       const formData = new FormData()
-      formData.append('file', waiverFile)
-      const uploadRes = await fetch('/api/upload/waiver', {
+      formData.append('file', contractFile)
+      const uploadRes = await fetch('/api/upload/contract', {
         method: 'POST',
         body: formData,
       })
 
       if (!uploadRes.ok) {
         const err = await uploadRes.json()
-        throw new Error(err.error ?? 'Failed to upload waiver')
+        throw new Error(err.error ?? 'Failed to upload contract')
       }
 
-      const { path: waiverPath } = await uploadRes.json()
-      setWaiverUploaded(true)
+      const { path: contractPath } = await uploadRes.json()
+      setContractUploaded(true)
 
-      // Step 2: submit checkout request with waiver path
       const checkoutRes = await fetch('/api/checkouts', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -79,7 +77,7 @@ export default function CheckoutForm({ item }: Props) {
           checkout_at: checkoutAt,
           return_date: data.return_date,
           return_time: data.return_time,
-          waiver_url: waiverPath,
+          contract_url: contractPath,
           rental_consent: data.rental_consent,
         }),
       })
@@ -147,55 +145,52 @@ export default function CheckoutForm({ item }: Props) {
             )}
           </div>
 
-          {/* Waiver */}
+          {/* Rental contract */}
           <div className="space-y-3 rounded-lg border border-orange-200 bg-orange-50 p-4">
             <div className="space-y-1">
               <Label className="text-gray-700 font-semibold">
-                Rental Waiver <span className="text-red-500">*</span>
+                Rental Contract <span className="text-red-500">*</span>
               </Label>
               <p className="text-sm text-gray-500">
-                You must complete the waiver and upload the signed copy before submitting.
+                Complete the rental contract and upload the signed copy before submitting.
               </p>
             </div>
 
-            {/* Step 1: open waiver */}
+            {/* Link to contract */}
             <a
-              href={process.env.NEXT_PUBLIC_WAIVER_URL ?? '#'}
+              href={process.env.NEXT_PUBLIC_CONTRACT_URL ?? '#'}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 text-sm font-medium text-orange-600 hover:text-orange-700 underline underline-offset-2"
             >
               <ExternalLink className="w-4 h-4" />
-              Step 1: Open and complete the waiver
+              Open rental contract
             </a>
 
-            {/* Step 2: upload signed waiver */}
+            {/* Upload signed contract */}
             <div className="space-y-1">
-              <Label htmlFor="waiver_file" className="text-gray-700">
-                Step 2: Upload signed waiver (PDF, JPG, or PNG)
+              <Label htmlFor="contract_file" className="text-gray-700">
+                Upload signed contract (PDF, JPG, or PNG)
               </Label>
               <div className="flex items-center gap-3">
                 <label
-                  htmlFor="waiver_file"
+                  htmlFor="contract_file"
                   className="flex items-center gap-2 cursor-pointer rounded-lg border border-dashed border-gray-300 bg-white px-4 py-2 text-sm text-gray-600 hover:border-orange-400 hover:text-orange-600 transition-colors"
                 >
-                  {waiverUploaded ? (
+                  {contractUploaded ? (
                     <CheckCircle2 className="w-4 h-4 text-green-600" />
                   ) : (
                     <Upload className="w-4 h-4" />
                   )}
-                  {waiverFile ? waiverFile.name : 'Choose file...'}
+                  {contractFile ? contractFile.name : 'Choose file...'}
                   <input
-                    id="waiver_file"
+                    id="contract_file"
                     type="file"
                     accept=".pdf,.jpg,.jpeg,.png,.webp"
                     className="hidden"
                     onChange={handleFileChange}
                   />
                 </label>
-                {waiverFile && !waiverUploaded && (
-                  <span className="text-xs text-gray-400">Ready to upload on submit</span>
-                )}
               </div>
             </div>
           </div>
@@ -209,9 +204,9 @@ export default function CheckoutForm({ item }: Props) {
                 {...register('rental_consent')}
               />
               <span className="text-sm text-gray-600 group-hover:text-gray-800 transition-colors">
-                I agree to the Startup Shell rental agreement and take responsibility for the safe
-                return of this item in the same condition it was borrowed.{' '}
-                <span className="text-red-500">*</span>
+                By submitting this form, you agree to our rental terms and conditions. When you
+                rent a resource, you are responsible for its safekeeping and any damage that may
+                occur during your use. <span className="text-red-500">*</span>
               </span>
             </label>
             {errors.rental_consent && (

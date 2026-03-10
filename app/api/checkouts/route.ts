@@ -9,7 +9,7 @@ const checkoutSchema = z.object({
   checkout_at: z.string(),
   return_date: z.string(),
   return_time: z.string(),
-  waiver_url: z.string().optional(),
+  contract_url: z.string().optional(),
   rental_consent: z.boolean(),
 })
 

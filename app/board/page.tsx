@@ -70,13 +70,13 @@ export default function BoardRequestsPage() {
     }
   }
 
-  const handleViewWaiver = async (checkoutId: string) => {
-    const res = await fetch(`/api/board/waiver/${checkoutId}`)
+  const handleViewContract = async (checkoutId: string) => {
+    const res = await fetch(`/api/board/contract/${checkoutId}`)
     if (res.ok) {
       const { url } = await res.json()
       window.open(url, '_blank')
     } else {
-      toast.error('Could not load waiver.')
+      toast.error('Could not load contract.')
     }
   }
 
@@ -124,17 +124,17 @@ export default function BoardRequestsPage() {
         <p><span className="font-medium text-gray-700">Checkout: </span>{formatNY(c.checkout_at)}</p>
         <p><span className="font-medium text-gray-700">Due back: </span>{formatDate(c.return_date)} at {formatTime(c.return_time)}</p>
         <div className="flex items-center gap-2 flex-wrap pt-1 text-sm">
-          <span className="font-medium text-gray-700">Waiver:</span>
-          {c.waiver_url ? (
+          <span className="font-medium text-gray-700">Contract:</span>
+          {c.contract_url ? (
             <button
-              onClick={() => handleViewWaiver(c.id)}
+              onClick={() => handleViewContract(c.id)}
               className="inline-flex items-center gap-1 text-orange-600 hover:text-orange-700 underline underline-offset-2"
             >
               <FileText className="w-3.5 h-3.5" />
-              View waiver
+              View contract
             </button>
           ) : (
-            <span className="text-gray-400 italic">No waiver uploaded</span>
+            <span className="text-gray-400 italic">No contract uploaded</span>
           )}
           <span className="text-gray-300">·</span>
           <span className={c.rental_consent ? 'text-green-700 font-medium' : 'text-red-500'}>
