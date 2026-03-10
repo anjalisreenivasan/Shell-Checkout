@@ -22,7 +22,7 @@ export async function GET(req: NextRequest) {
     .order('created_at', { ascending: false })
 
   if (query) {
-    builder = builder.ilike('name', `%${query}%`)
+    builder = builder.or(`name.ilike.%${query}%,description.ilike.%${query}%`)
   }
 
   const { data, error } = await builder

@@ -10,7 +10,7 @@ async function getItems(query?: string): Promise<Item[]> {
     .order('name')
 
   if (query) {
-    builder = builder.ilike('name', `%${query}%`)
+    builder = builder.or(`name.ilike.%${query}%,description.ilike.%${query}%`)
   }
 
   const { data } = await builder

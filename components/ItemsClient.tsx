@@ -70,7 +70,7 @@ export default function ItemsClient({ items, initialQuery }: Props) {
               <div className="flex items-center justify-between">
                 <span className="text-xs text-gray-400">Qty: {item.quantity}</span>
                 <span className="text-xs text-orange-600 font-medium flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                  View <ArrowRight className="w-3 h-3" />
+                  {item.name === 'Digital Resources' ? 'Details' : 'View'} <ArrowRight className="w-3 h-3" />
                 </span>
               </div>
             </Link>
