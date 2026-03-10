@@ -11,6 +11,8 @@ export interface Sheller {
   email: string
   name: string
   is_board_member: boolean
+  discord_handle: string | null
+  discord_user_id: string | null
   created_at: string
 }
 

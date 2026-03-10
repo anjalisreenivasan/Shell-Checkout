@@ -1,17 +1,40 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useSearchParams } from 'next/navigation'
 import { useUser, UserButton, SignInButton } from '@clerk/nextjs'
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Menu } from 'lucide-react'
+import { toast } from 'sonner'
+import DiscordPrompt from '@/components/DiscordPrompt'
 
 export default function Navbar() {
+  return (
+    <Suspense>
+      <NavbarInner />
+    </Suspense>
+  )
+}
+
+function NavbarInner() {
   const { isSignedIn } = useUser()
   const pathname = usePathname()
+  const searchParams = useSearchParams()
   const [isBoard, setIsBoard] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
+  const [showDiscordPrompt, setShowDiscordPrompt] = useState(false)
+
+  useEffect(() => {
+    const discordStatus = searchParams.get('discord')
+    if (discordStatus === 'linked') {
+      toast.success('Discord account linked!')
+      window.history.replaceState({}, '', pathname)
+    } else if (discordStatus === 'error') {
+      toast.error('Failed to link Discord. Try again.')
+      window.history.replaceState({}, '', pathname)
+    }
+  }, [searchParams, pathname])
 
   useEffect(() => {
     if (!isSignedIn) return
@@ -19,6 +42,7 @@ export default function Navbar() {
       .then(res => res.json())
       .then(data => {
         if (data.sheller?.is_board_member) setIsBoard(true)
+        if (data.sheller && !data.sheller.discord_user_id) setShowDiscordPrompt(true)
       })
   }, [isSignedIn])
 
@@ -82,6 +106,8 @@ export default function Navbar() {
           </div>
         )}
       </div>
+
+      <DiscordPrompt open={showDiscordPrompt} onComplete={() => setShowDiscordPrompt(false)} />
     </nav>
   )
 }

@@ -19,6 +19,8 @@ create table if not exists public.shellers (
   email           text        unique not null,
   name            text        not null,
   is_board_member boolean     default false not null,
+  discord_handle  text,
+  discord_user_id text,
   created_at      timestamptz default now() not null
 );
 

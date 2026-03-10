@@ -2,6 +2,7 @@ import { auth } from '@clerk/nextjs/server'
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase'
 import { isBoardMember, getSheller } from '@/lib/sheller'
+import { notifyNewRequest } from '@/lib/discord'
 import { z } from 'zod'
 
 const checkoutSchema = z.object({
@@ -59,5 +60,16 @@ export async function POST(req: NextRequest) {
     .single()
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+
+  const boardUrl = `${req.headers.get('origin') ?? process.env.NEXT_PUBLIC_APP_URL ?? ''}/board`
+  notifyNewRequest(
+    sheller.name,
+    sheller.discord_handle ?? null,
+    data.item?.name ?? 'Unknown item',
+    parsed.data.return_date,
+    parsed.data.return_time,
+    boardUrl,
+  ).catch(err => console.error('Discord notification failed:', err))
+
   return NextResponse.json({ checkout: data }, { status: 201 })
 }

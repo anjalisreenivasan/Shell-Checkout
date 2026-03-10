@@ -2,6 +2,7 @@ import { auth } from '@clerk/nextjs/server'
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase'
 import { isBoardMember, getSheller } from '@/lib/sheller'
+import { notifyApproved, notifyDenied } from '@/lib/discord'
 import { z } from 'zod'
 
 const boardUpdateSchema = z.object({
@@ -43,6 +44,27 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
       .single()
 
     if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+
+    if (parsed.data.status === 'approved' || parsed.data.status === 'denied') {
+      const shellerRecord = await supabaseAdmin
+        .from('shellers')
+        .select('discord_user_id')
+        .eq('id', data.sheller?.id)
+        .single()
+      const discordUserId = shellerRecord?.data?.discord_user_id ?? null
+      const itemName = data.item?.name ?? 'Unknown item'
+
+      if (parsed.data.status === 'approved') {
+        notifyApproved(discordUserId, itemName).catch(err =>
+          console.error('Discord approve notification failed:', err)
+        )
+      } else {
+        notifyDenied(discordUserId, itemName).catch(err =>
+          console.error('Discord deny notification failed:', err)
+        )
+      }
+    }
+
     return NextResponse.json({ checkout: data })
   }
 
