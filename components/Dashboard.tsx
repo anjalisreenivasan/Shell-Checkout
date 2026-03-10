@@ -1,12 +1,13 @@
 import HomeSearch from '@/components/HomeSearch'
 import CheckoutCalendar from '@/components/CheckoutCalendar'
-import type { Checkout } from '@/types'
+import type { Checkout, Blockout } from '@/types'
 
 interface Props {
   checkouts: Checkout[]
+  blockouts: Blockout[]
 }
 
-export default function Dashboard({ checkouts }: Props) {
+export default function Dashboard({ checkouts, blockouts }: Props) {
   const events = checkouts.map(c => ({
     id: c.id,
     title: `${(c.item as { name: string })?.name} — ${(c.sheller as { name: string })?.name}`,
@@ -22,6 +23,24 @@ export default function Dashboard({ checkouts }: Props) {
       status: c.status,
     },
   }))
+
+  const blockoutEvents = blockouts.map(b => ({
+    id: `blockout-${b.id}`,
+    title: `Blocked: ${(b.item as { name: string })?.name} — ${b.title}`,
+    start: b.start_at,
+    end: b.end_at,
+    backgroundColor: '#1e1e1e',
+    borderColor: '#111',
+    extendedProps: {
+      shellerName: '',
+      itemName: `${(b.item as { name: string })?.name} (Blocked)`,
+      returnDate: '',
+      returnTime: '',
+      status: 'blocked',
+    },
+  }))
+
+  const allEvents = [...events, ...blockoutEvents]
 
   return (
     <div className="space-y-10">
@@ -44,10 +63,14 @@ export default function Dashboard({ checkouts }: Props) {
               <span className="w-2.5 h-2.5 rounded-full bg-gray-300" />
               Returned
             </span>
+            <span className="flex items-center gap-1.5">
+              <span className="w-2.5 h-2.5 rounded-full bg-gray-900" />
+              Blocked
+            </span>
           </div>
         </div>
         <div className="bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
-          <CheckoutCalendar events={events} />
+          <CheckoutCalendar events={allEvents} />
         </div>
       </div>
     </div>

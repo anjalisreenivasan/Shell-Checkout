@@ -5,7 +5,7 @@ import Link from 'next/link'
 import ItemCalendar from '@/components/ItemCalendar'
 import { formatDate, formatTime } from '@/lib/timezone'
 import { ArrowLeft, Calendar, User } from 'lucide-react'
-import type { Item, Checkout } from '@/types'
+import type { Item, Checkout, Blockout } from '@/types'
 
 async function getItem(id: string): Promise<Item | null> {
   const { data } = await supabaseAdmin
@@ -27,13 +27,22 @@ async function getItemCheckouts(itemId: string): Promise<Checkout[]> {
   return data ?? []
 }
 
+async function getItemBlockouts(itemId: string): Promise<Blockout[]> {
+  const { data } = await supabaseAdmin
+    .from('blockouts')
+    .select('*')
+    .eq('item_id', itemId)
+    .order('start_at', { ascending: true })
+  return data ?? []
+}
+
 export default async function ItemDetailPage({
   params,
 }: {
   params: Promise<{ id: string }>
 }) {
   const { id } = await params
-  const [item, checkouts] = await Promise.all([getItem(id), getItemCheckouts(id)])
+  const [item, checkouts, blockouts] = await Promise.all([getItem(id), getItemCheckouts(id), getItemBlockouts(id)])
 
   if (!item) notFound()
 
@@ -72,7 +81,7 @@ export default async function ItemDetailPage({
 
       <div className="bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
         <h2 className="text-sm font-semibold text-gray-700 mb-4">Availability</h2>
-        <ItemCalendar checkouts={checkouts} />
+        <ItemCalendar checkouts={checkouts} blockouts={blockouts} />
       </div>
 
       {checkouts.length > 0 && (

@@ -42,6 +42,17 @@ export interface Checkout {
   item?: Item
 }
 
+export interface Blockout {
+  id: string
+  item_id: string
+  title: string
+  start_at: string
+  end_at: string
+  created_by: string | null
+  created_at: string
+  item?: Item
+}
+
 export interface Return {
   id: string
   request_id: string

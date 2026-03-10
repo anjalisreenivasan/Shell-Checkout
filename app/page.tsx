@@ -2,7 +2,7 @@ import { auth } from '@clerk/nextjs/server'
 import { supabaseAdmin } from '@/lib/supabase'
 import LandingPage from '@/components/LandingPage'
 import Dashboard from '@/components/Dashboard'
-import type { Checkout } from '@/types'
+import type { Checkout, Blockout } from '@/types'
 
 async function getActiveCheckouts(): Promise<Checkout[]> {
   const { data } = await supabaseAdmin
@@ -14,6 +14,15 @@ async function getActiveCheckouts(): Promise<Checkout[]> {
   return data ?? []
 }
 
+async function getAllBlockouts(): Promise<Blockout[]> {
+  const { data } = await supabaseAdmin
+    .from('blockouts')
+    .select('*, item:items(id, name)')
+    .order('start_at', { ascending: true })
+
+  return data ?? []
+}
+
 export default async function HomePage() {
   const { userId } = await auth()
 
@@ -21,6 +30,6 @@ export default async function HomePage() {
     return <LandingPage />
   }
 
-  const checkouts = await getActiveCheckouts()
-  return <Dashboard checkouts={checkouts} />
+  const [checkouts, blockouts] = await Promise.all([getActiveCheckouts(), getAllBlockouts()])
+  return <Dashboard checkouts={checkouts} blockouts={blockouts} />
 }
