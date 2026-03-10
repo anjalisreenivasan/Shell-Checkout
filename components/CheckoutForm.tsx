@@ -147,13 +147,15 @@ export default function CheckoutForm({ item }: Props) {
               className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
             >
               <option value="">Select a time</option>
-              {Array.from({ length: 24 * 4 }, (_, i) => {
-                const h = Math.floor(i / 4)
+              {Array.from({ length: 17 * 4 + 1 }, (_, i) => {
+                const h = Math.floor(i / 4) + 7
                 const m = (i % 4) * 15
-                const value = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`
-                const hour12 = h === 0 ? 12 : h > 12 ? h - 12 : h
-                const ampm = h < 12 ? 'AM' : 'PM'
-                const label = `${hour12}:${String(m).padStart(2, '0')} ${ampm}`
+                if (h === 24 && m > 0) return null
+                const displayH = h === 24 ? 0 : h
+                const value = `${String(displayH).padStart(2, '0')}:${String(m).padStart(2, '0')}`
+                const hour12 = displayH === 0 ? 12 : displayH > 12 ? displayH - 12 : displayH
+                const ampm = displayH === 0 || displayH >= 12 ? (displayH === 0 ? 'AM' : 'PM') : 'AM'
+                const label = displayH === 0 ? '12:00 AM' : `${hour12}:${String(m).padStart(2, '0')} ${ampm}`
                 return <option key={value} value={value}>{label}</option>
               })}
             </select>

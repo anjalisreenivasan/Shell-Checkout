@@ -91,15 +91,17 @@ export default function BoardBlockoutsPage() {
     }
   }
 
-  const timeOptions = Array.from({ length: 24 * 4 }, (_, i) => {
-    const h = Math.floor(i / 4)
+  const timeOptions = Array.from({ length: 17 * 4 + 1 }, (_, i) => {
+    const h = Math.floor(i / 4) + 7
     const m = (i % 4) * 15
-    const value = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`
-    const hour12 = h === 0 ? 12 : h > 12 ? h - 12 : h
-    const ampm = h < 12 ? 'AM' : 'PM'
-    const label = `${hour12}:${String(m).padStart(2, '0')} ${ampm}`
+    if (h === 24 && m > 0) return null
+    const displayH = h === 24 ? 0 : h
+    const value = `${String(displayH).padStart(2, '0')}:${String(m).padStart(2, '0')}`
+    const hour12 = displayH === 0 ? 12 : displayH > 12 ? displayH - 12 : displayH
+    const ampm = displayH === 0 ? 'AM' : displayH >= 12 ? 'PM' : 'AM'
+    const label = displayH === 0 ? '12:00 AM' : `${hour12}:${String(m).padStart(2, '0')} ${ampm}`
     return { value, label }
-  })
+  }).filter(Boolean) as { value: string; label: string }[]
 
   if (loading) {
     return (
