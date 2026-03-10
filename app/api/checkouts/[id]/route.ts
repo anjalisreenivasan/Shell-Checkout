@@ -39,7 +39,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
       .from('checkouts')
       .update(updateData)
       .eq('id', id)
-      .select('*, sheller:shellers(id, name, email), item:items(id, name, description)')
+      .select('*, sheller:sheller_id(id, name, email), item:items(id, name, description)')
       .single()
 
     if (error) return NextResponse.json({ error: error.message }, { status: 500 })

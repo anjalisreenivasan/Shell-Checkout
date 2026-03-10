@@ -5,7 +5,7 @@ import { supabaseAdmin } from '@/lib/supabase'
 export async function GET() {
   const { data, error } = await supabaseAdmin
     .from('checkouts')
-    .select('*, sheller:shellers(id, name), item:items(id, name, description)')
+    .select('*, sheller:sheller_id(id, name), item:items(id, name, description)')
     .in('status', ['approved', 'returned'])
     .order('checkout_at', { ascending: false })
 

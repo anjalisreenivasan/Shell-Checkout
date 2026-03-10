@@ -20,7 +20,7 @@ async function getItem(id: string): Promise<Item | null> {
 async function getItemCheckouts(itemId: string): Promise<Checkout[]> {
   const { data } = await supabaseAdmin
     .from('checkouts')
-    .select('*, sheller:shellers(id, name)')
+    .select('*, sheller:sheller_id(id, name)')
     .eq('item_id', itemId)
     .in('status', ['approved', 'returned'])
     .order('checkout_at', { ascending: true })

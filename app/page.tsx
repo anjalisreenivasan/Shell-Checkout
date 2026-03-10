@@ -7,7 +7,7 @@ import type { Checkout } from '@/types'
 async function getActiveCheckouts(): Promise<Checkout[]> {
   const { data } = await supabaseAdmin
     .from('checkouts')
-    .select('*, sheller:shellers(id, name), item:items(id, name, description)')
+    .select('*, sheller:sheller_id(id, name), item:items(id, name, description)')
     .in('status', ['approved', 'returned'])
     .order('checkout_at', { ascending: false })
 

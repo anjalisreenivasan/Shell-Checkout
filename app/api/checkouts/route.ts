@@ -22,7 +22,7 @@ export async function GET(req: NextRequest) {
 
   let query = supabaseAdmin
     .from('checkouts')
-    .select('*, sheller:shellers(id, name, email), item:items(id, name, description)')
+    .select('*, sheller:sheller_id(id, name, email), item:items(id, name, description)')
     .order('created_at', { ascending: false })
 
   if (!board) {
@@ -53,7 +53,7 @@ export async function POST(req: NextRequest) {
   const { data, error } = await supabaseAdmin
     .from('checkouts')
     .insert({ ...parsed.data, sheller_id: sheller.id, status: 'pending' })
-    .select('*, sheller:shellers(id, name, email), item:items(id, name, description)')
+    .select('*, sheller:sheller_id(id, name, email), item:items(id, name, description)')
     .single()
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
