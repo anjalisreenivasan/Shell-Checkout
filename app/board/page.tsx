@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { formatNY, formatDate, formatTime } from '@/lib/timezone'
+import { FileText } from 'lucide-react'
 import type { Checkout } from '@/types'
 
 const STATUS_COLORS: Record<string, string> = {
@@ -69,6 +70,16 @@ export default function BoardRequestsPage() {
     }
   }
 
+  const handleViewWaiver = async (checkoutId: string) => {
+    const res = await fetch(`/api/board/waiver/${checkoutId}`)
+    if (res.ok) {
+      const { url } = await res.json()
+      window.open(url, '_blank')
+    } else {
+      toast.error('Could not load waiver.')
+    }
+  }
+
   const handleConfirmReturn = async (checkout: Checkout) => {
     // Find the return record for this checkout
     const res = await fetch(`/api/checkouts/${checkout.id}`, {
@@ -112,6 +123,24 @@ export default function BoardRequestsPage() {
       <CardContent className="space-y-2 text-sm text-gray-600">
         <p><span className="font-medium text-gray-700">Checkout: </span>{formatNY(c.checkout_at)}</p>
         <p><span className="font-medium text-gray-700">Due back: </span>{formatDate(c.return_date)} at {formatTime(c.return_time)}</p>
+        <div className="flex items-center gap-2 flex-wrap pt-1 text-sm">
+          <span className="font-medium text-gray-700">Waiver:</span>
+          {c.waiver_url ? (
+            <button
+              onClick={() => handleViewWaiver(c.id)}
+              className="inline-flex items-center gap-1 text-orange-600 hover:text-orange-700 underline underline-offset-2"
+            >
+              <FileText className="w-3.5 h-3.5" />
+              View waiver
+            </button>
+          ) : (
+            <span className="text-gray-400 italic">No waiver uploaded</span>
+          )}
+          <span className="text-gray-300">·</span>
+          <span className={c.rental_consent ? 'text-green-700 font-medium' : 'text-red-500'}>
+            {c.rental_consent ? 'Consented to rental agreement' : 'No consent recorded'}
+          </span>
+        </div>
         <div className="flex gap-2 flex-wrap pt-1">{actions}</div>
       </CardContent>
     </Card>

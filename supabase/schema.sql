@@ -44,9 +44,11 @@ create table if not exists public.checkouts (
   return_time  time        not null,
   status       text        default 'pending' not null
                check (status in ('pending', 'approved', 'denied', 'returned', 'return_confirmed')),
-  approved_by  uuid        references public.shellers(id) on delete set null,
-  created_at   timestamptz default now() not null,
-  updated_at   timestamptz default now() not null
+  approved_by    uuid        references public.shellers(id) on delete set null,
+  waiver_url     text,
+  rental_consent boolean     default false not null,
+  created_at     timestamptz default now() not null,
+  updated_at     timestamptz default now() not null
 );
 
 -- Auto-update updated_at on checkouts

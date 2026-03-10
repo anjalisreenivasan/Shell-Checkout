@@ -9,6 +9,8 @@ const checkoutSchema = z.object({
   checkout_at: z.string(),
   return_date: z.string(),
   return_time: z.string(),
+  waiver_url: z.string().optional(),
+  rental_consent: z.boolean(),
 })
 
 // GET /api/checkouts — board gets all, sheller gets own
