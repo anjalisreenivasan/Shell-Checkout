@@ -28,9 +28,9 @@ export default async function ItemsPage({
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">Browse Items</h1>
-        <p className="text-gray-500 mt-1">
-          Find a resource and submit a checkout request.
+        <h1 className="text-2xl font-bold text-gray-900">Items</h1>
+        <p className="text-sm text-gray-400 mt-1">
+          Browse resources and request a checkout.
         </p>
       </div>
       <ItemsClient items={items} initialQuery={q ?? ''} />

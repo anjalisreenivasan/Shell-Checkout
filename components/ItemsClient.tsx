@@ -3,10 +3,8 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
-import { Search, Package } from 'lucide-react'
+import { Search, Package, ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 import type { Item } from '@/types'
 
@@ -28,55 +26,54 @@ export default function ItemsClient({ items, initialQuery }: Props) {
 
   return (
     <div className="space-y-6">
-      <form onSubmit={handleSearch} className="flex gap-2 max-w-md">
+      <form onSubmit={handleSearch} className="relative max-w-md">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
         <Input
           placeholder="Search items..."
           value={query}
           onChange={e => setQuery(e.target.value)}
-          className="flex-1"
+          className="pl-10 h-10 bg-white border-gray-200 shadow-sm"
         />
-        <Button type="submit" className="bg-orange-600 hover:bg-orange-700 text-white">
-          <Search className="w-4 h-4" />
-        </Button>
       </form>
 
       {items.length === 0 ? (
-        <div className="text-center py-20 text-gray-400">
-          <Package className="w-12 h-12 mx-auto mb-3 opacity-40" />
-          <p className="text-lg">No items found.</p>
+        <div className="text-center py-24 text-gray-300">
+          <Package className="w-10 h-10 mx-auto mb-3" />
+          <p className="text-sm">No items found.</p>
         </div>
       ) : (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {items.map(item => (
-            <Card key={item.id} className="border border-gray-200 hover:shadow-md transition-shadow">
-              <CardHeader className="pb-2">
-                <div className="flex items-start justify-between gap-2">
-                  <CardTitle className="text-base text-gray-900">{item.name}</CardTitle>
-                  <Badge
-                    className={
-                      item.is_available
-                        ? 'bg-green-100 text-green-800 border-green-200'
-                        : 'bg-red-100 text-red-800 border-red-200'
-                    }
-                    variant="outline"
-                  >
-                    {item.is_available ? 'Available' : 'Unavailable'}
-                  </Badge>
-                </div>
-              </CardHeader>
-              <CardContent className="text-sm text-gray-500">
-                <p>{item.description ?? 'No description provided.'}</p>
-                <p className="mt-2 text-gray-700 font-medium">Qty: {item.quantity}</p>
-              </CardContent>
-              <CardFooter>
-                <Link
-                  href={`/items/${item.id}`}
-                  className="inline-flex items-center justify-center w-full rounded-lg bg-orange-600 hover:bg-orange-700 text-white text-[0.8rem] font-medium px-2.5 h-7 transition-colors"
+            <Link
+              key={item.id}
+              href={`/items/${item.id}`}
+              className="group block bg-white rounded-xl border border-gray-200 p-4 hover:border-orange-200 hover:shadow-md transition-all"
+            >
+              <div className="flex items-start justify-between gap-2 mb-2">
+                <span className="font-medium text-gray-900 group-hover:text-orange-600 transition-colors">
+                  {item.name}
+                </span>
+                <Badge
+                  variant="outline"
+                  className={`text-[10px] shrink-0 ${
+                    item.is_available
+                      ? 'bg-green-50 text-green-700 border-green-200'
+                      : 'bg-red-50 text-red-600 border-red-200'
+                  }`}
                 >
-                  View &amp; Request
-                </Link>
-              </CardFooter>
-            </Card>
+                  {item.is_available ? 'Available' : 'Unavailable'}
+                </Badge>
+              </div>
+              <p className="text-sm text-gray-400 line-clamp-2 mb-3">
+                {item.description ?? 'No description.'}
+              </p>
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-gray-400">Qty: {item.quantity}</span>
+                <span className="text-xs text-orange-600 font-medium flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                  View <ArrowRight className="w-3 h-3" />
+                </span>
+              </div>
+            </Link>
           ))}
         </div>
       )}

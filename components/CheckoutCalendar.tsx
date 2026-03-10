@@ -7,6 +7,7 @@ import { useState } from 'react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Badge } from '@/components/ui/badge'
 import { formatDate, formatTime } from '@/lib/timezone'
+import { Calendar, Clock, User } from 'lucide-react'
 
 interface CalendarEvent {
   id: string
@@ -33,7 +34,7 @@ export default function CheckoutCalendar({ events }: Props) {
 
   return (
     <>
-      <div className="[&_.fc-button-primary]:bg-orange-600 [&_.fc-button-primary]:border-orange-600 [&_.fc-button-primary:hover]:bg-orange-700 [&_.fc-button-primary:not(:disabled):active]:bg-orange-700 [&_.fc-button-primary:not(:disabled).fc-button-active]:bg-orange-700">
+      <div className="[&_.fc]:text-sm [&_.fc-toolbar-title]:text-base [&_.fc-toolbar-title]:font-semibold [&_.fc-button-primary]:bg-orange-600 [&_.fc-button-primary]:border-orange-600 [&_.fc-button-primary]:text-xs [&_.fc-button-primary]:shadow-none [&_.fc-button-primary:hover]:bg-orange-700 [&_.fc-button-primary:not(:disabled):active]:bg-orange-700 [&_.fc-button-primary:not(:disabled).fc-button-active]:bg-orange-700 [&_.fc-day-today]:bg-orange-50/50 [&_.fc-event]:rounded-md [&_.fc-event]:px-1.5 [&_.fc-event]:cursor-pointer">
         <FullCalendar
           plugins={[dayGridPlugin, timeGridPlugin]}
           initialView="dayGridMonth"
@@ -52,34 +53,34 @@ export default function CheckoutCalendar({ events }: Props) {
         />
       </div>
 
-      {/* Event detail popup */}
       <Dialog open={!!selected} onOpenChange={() => setSelected(null)}>
-        <DialogContent className="max-w-sm">
+        <DialogContent className="max-w-xs">
           <DialogHeader>
-            <DialogTitle className="text-orange-600">{selected?.itemName}</DialogTitle>
+            <DialogTitle className="text-lg text-gray-900">{selected?.itemName}</DialogTitle>
           </DialogHeader>
-          <div className="space-y-2 text-sm text-gray-600">
-            <p>
-              <span className="font-medium text-gray-700">Borrowed by: </span>
+          <div className="space-y-3 text-sm">
+            <div className="flex items-center gap-2 text-gray-600">
+              <User className="w-3.5 h-3.5 text-gray-400" />
               {selected?.shellerName}
-            </p>
-            <p>
-              <span className="font-medium text-gray-700">Due back: </span>
-              {selected ? `${formatDate(selected.returnDate)} at ${formatTime(selected.returnTime)}` : ''}
-            </p>
-            <p>
-              <span className="font-medium text-gray-700">Status: </span>
-              <Badge
-                variant="outline"
-                className={
-                  selected?.status === 'approved'
-                    ? 'bg-green-100 text-green-800 border-green-200'
-                    : 'bg-gray-100 text-gray-700 border-gray-200'
-                }
-              >
-                {selected?.status === 'approved' ? 'Checked Out' : 'Returned'}
-              </Badge>
-            </p>
+            </div>
+            <div className="flex items-center gap-2 text-gray-600">
+              <Calendar className="w-3.5 h-3.5 text-gray-400" />
+              {selected ? formatDate(selected.returnDate) : ''}
+            </div>
+            <div className="flex items-center gap-2 text-gray-600">
+              <Clock className="w-3.5 h-3.5 text-gray-400" />
+              {selected ? formatTime(selected.returnTime) : ''}
+            </div>
+            <Badge
+              variant="outline"
+              className={
+                selected?.status === 'approved'
+                  ? 'bg-orange-50 text-orange-700 border-orange-200'
+                  : 'bg-gray-50 text-gray-600 border-gray-200'
+              }
+            >
+              {selected?.status === 'approved' ? 'Checked Out' : 'Returned'}
+            </Badge>
           </div>
         </DialogContent>
       </Dialog>

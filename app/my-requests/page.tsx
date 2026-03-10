@@ -4,17 +4,17 @@ import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { formatNY, formatDate, formatTime } from '@/lib/timezone'
+import { Calendar, Clock, RotateCcw } from 'lucide-react'
 import type { Checkout } from '@/types'
 
 const STATUS_COLORS: Record<string, string> = {
-  pending: 'bg-yellow-100 text-yellow-800 border-yellow-200',
-  approved: 'bg-green-100 text-green-800 border-green-200',
-  denied: 'bg-red-100 text-red-800 border-red-200',
-  returned: 'bg-blue-100 text-blue-800 border-blue-200',
-  return_confirmed: 'bg-gray-100 text-gray-700 border-gray-200',
+  pending: 'bg-yellow-50 text-yellow-700 border-yellow-200',
+  approved: 'bg-green-50 text-green-700 border-green-200',
+  denied: 'bg-red-50 text-red-600 border-red-200',
+  returned: 'bg-blue-50 text-blue-700 border-blue-200',
+  return_confirmed: 'bg-gray-50 text-gray-600 border-gray-200',
 }
 
 const STATUS_LABELS: Record<string, string> = {
@@ -56,50 +56,53 @@ export default function MyRequestsPage() {
   const history = checkouts.filter(c => ['denied', 'return_confirmed'].includes(c.status))
 
   if (loading) {
-    return <div className="text-center py-20 text-gray-400">Loading your requests...</div>
+    return (
+      <div className="text-center py-24 text-gray-300">
+        <div className="w-5 h-5 border-2 border-gray-300 border-t-orange-600 rounded-full animate-spin mx-auto mb-3" />
+        <p className="text-sm">Loading requests...</p>
+      </div>
+    )
   }
 
   const renderCheckout = (c: Checkout) => (
-    <Card key={c.id} className="border border-gray-200">
-      <CardHeader className="pb-2">
-        <div className="flex items-start justify-between gap-2">
-          <CardTitle className="text-base text-gray-900">
-            {(c.item as { name: string })?.name ?? 'Unknown Item'}
-          </CardTitle>
-          <Badge variant="outline" className={STATUS_COLORS[c.status]}>
-            {STATUS_LABELS[c.status]}
-          </Badge>
-        </div>
-      </CardHeader>
-      <CardContent className="space-y-1 text-sm text-gray-600">
-        <p>
-          <span className="font-medium text-gray-700">Checked out: </span>
-          {formatNY(c.checkout_at)}
-        </p>
-        <p>
-          <span className="font-medium text-gray-700">Due back: </span>
-          {formatDate(c.return_date)} at {formatTime(c.return_time)}
-        </p>
-        {c.status === 'approved' && (
-          <div className="pt-2">
-            <Button
-              size="sm"
-              onClick={() => handleMarkReturned(c.id)}
-              className="bg-blue-600 hover:bg-blue-700 text-white"
-            >
-              Mark as Returned
-            </Button>
-          </div>
-        )}
-      </CardContent>
-    </Card>
+    <div key={c.id} className="bg-white rounded-xl border border-gray-200 p-4 space-y-3">
+      <div className="flex items-start justify-between gap-2">
+        <span className="font-medium text-gray-900">
+          {(c.item as { name: string })?.name ?? 'Unknown Item'}
+        </span>
+        <Badge variant="outline" className={`text-[10px] ${STATUS_COLORS[c.status]}`}>
+          {STATUS_LABELS[c.status]}
+        </Badge>
+      </div>
+      <div className="flex flex-col gap-1 text-sm text-gray-500">
+        <span className="flex items-center gap-2">
+          <Calendar className="w-3.5 h-3.5 text-gray-300" />
+          Checked out {formatNY(c.checkout_at)}
+        </span>
+        <span className="flex items-center gap-2">
+          <Clock className="w-3.5 h-3.5 text-gray-300" />
+          Due {formatDate(c.return_date)} at {formatTime(c.return_time)}
+        </span>
+      </div>
+      {c.status === 'approved' && (
+        <Button
+          size="sm"
+          variant="outline"
+          onClick={() => handleMarkReturned(c.id)}
+          className="gap-1.5"
+        >
+          <RotateCcw className="w-3.5 h-3.5" />
+          Mark as Returned
+        </Button>
+      )}
+    </div>
   )
 
   return (
-    <div className="space-y-6 max-w-3xl">
+    <div className="space-y-6 max-w-2xl">
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">My Requests</h1>
-        <p className="text-gray-500 mt-1">Track your active and past checkout requests.</p>
+        <h1 className="text-2xl font-bold text-gray-900">My Requests</h1>
+        <p className="text-sm text-gray-400 mt-1">Track your checkout requests.</p>
       </div>
 
       <Tabs defaultValue="active">
@@ -107,22 +110,14 @@ export default function MyRequestsPage() {
           <TabsTrigger value="active">Active ({active.length})</TabsTrigger>
           <TabsTrigger value="history">History ({history.length})</TabsTrigger>
         </TabsList>
-        <TabsContent value="active" className="space-y-4 mt-4">
+        <TabsContent value="active" className="space-y-3 mt-4">
           {active.length === 0 ? (
-            <Card>
-              <CardContent className="py-12 text-center text-gray-400">
-                No active requests.
-              </CardContent>
-            </Card>
+            <div className="text-center py-16 text-gray-300 text-sm">No active requests.</div>
           ) : active.map(renderCheckout)}
         </TabsContent>
-        <TabsContent value="history" className="space-y-4 mt-4">
+        <TabsContent value="history" className="space-y-3 mt-4">
           {history.length === 0 ? (
-            <Card>
-              <CardContent className="py-12 text-center text-gray-400">
-                No history yet.
-              </CardContent>
-            </Card>
+            <div className="text-center py-16 text-gray-300 text-sm">No history yet.</div>
           ) : history.map(renderCheckout)}
         </TabsContent>
       </Tabs>

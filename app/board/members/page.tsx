@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import type { Sheller } from '@/types'
 
@@ -38,43 +37,48 @@ export default function BoardMembersPage() {
     }
   }
 
-  if (loading) return <div className="text-center py-20 text-gray-400">Loading...</div>
+  if (loading) {
+    return (
+      <div className="text-center py-24 text-gray-300">
+        <div className="w-5 h-5 border-2 border-gray-300 border-t-orange-600 rounded-full animate-spin mx-auto mb-3" />
+        <p className="text-sm">Loading members...</p>
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-4 max-w-2xl">
-      <h2 className="text-xl font-semibold text-gray-800">All Members</h2>
-      <div className="space-y-3">
+      <h2 className="text-lg font-semibold text-gray-800">Members</h2>
+      <div className="divide-y divide-gray-100 rounded-xl border border-gray-200 bg-white overflow-hidden">
         {shellers.map(sheller => (
-          <Card key={sheller.id} className="border border-gray-200">
-            <CardContent className="py-4 flex items-center justify-between gap-4">
-              <div className="flex items-center gap-3">
-                <Avatar className="w-9 h-9">
-                  <AvatarFallback className="bg-orange-100 text-orange-700 text-sm font-semibold">
-                    {sheller.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="font-medium text-gray-900">{sheller.name}</span>
-                    {sheller.is_board_member && (
-                      <Badge className="bg-orange-100 text-orange-700 border-orange-200 text-xs" variant="outline">
-                        Board
-                      </Badge>
-                    )}
-                  </div>
-                  <p className="text-xs text-gray-400">{sheller.email}</p>
+          <div key={sheller.id} className="flex items-center justify-between gap-4 px-4 py-3.5">
+            <div className="flex items-center gap-3 min-w-0">
+              <Avatar className="w-8 h-8 shrink-0">
+                <AvatarFallback className="bg-orange-50 text-orange-600 text-xs font-semibold">
+                  {sheller.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
+              <div className="min-w-0">
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-medium text-gray-900 truncate">{sheller.name}</span>
+                  {sheller.is_board_member && (
+                    <Badge variant="outline" className="bg-orange-50 text-orange-600 border-orange-200 text-[10px]">
+                      Board
+                    </Badge>
+                  )}
                 </div>
+                <p className="text-xs text-gray-400 truncate">{sheller.email}</p>
               </div>
-              <Button
-                size="sm"
-                variant={sheller.is_board_member ? 'outline' : 'default'}
-                className={!sheller.is_board_member ? 'bg-orange-600 hover:bg-orange-700 text-white' : ''}
-                onClick={() => toggleBoard(sheller)}
-              >
-                {sheller.is_board_member ? 'Remove from Board' : 'Make Board Member'}
-              </Button>
-            </CardContent>
-          </Card>
+            </div>
+            <Button
+              size="sm"
+              variant="outline"
+              className={`text-xs shrink-0 ${!sheller.is_board_member ? 'bg-orange-600 hover:bg-orange-700 text-white border-orange-600' : ''}`}
+              onClick={() => toggleBoard(sheller)}
+            >
+              {sheller.is_board_member ? 'Remove' : 'Make Board'}
+            </Button>
+          </div>
         ))}
       </div>
     </div>

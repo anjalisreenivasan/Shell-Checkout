@@ -16,9 +16,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <ClerkProvider>
       <html lang="en">
-        <body className={`${inter.className} min-h-screen bg-gray-50`}>
+        <body className={`${inter.className} min-h-screen bg-gray-50/50`}>
           <Navbar />
-          <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
             {children}
           </main>
           <Toaster position="top-right" richColors />

@@ -9,9 +9,9 @@ import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { formatNY, nowInNY } from '@/lib/timezone'
-import { ExternalLink, Upload, CheckCircle2 } from 'lucide-react'
+import { ExternalLink, Upload, CheckCircle2, ArrowLeft } from 'lucide-react'
+import Link from 'next/link'
 import type { Item } from '@/types'
 
 const schema = z.object({
@@ -97,26 +97,32 @@ export default function CheckoutForm({ item }: Props) {
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="text-lg">{item.name}</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+    <div className="max-w-lg mx-auto space-y-6">
+      <Link href={`/items/${item.id}`} className="inline-flex items-center gap-1.5 text-sm text-gray-400 hover:text-gray-600 transition-colors">
+        <ArrowLeft className="w-3.5 h-3.5" />
+        Back to {item.name}
+      </Link>
 
-          {/* Checkout time — auto-filled */}
-          <div className="space-y-1">
-            <Label className="text-gray-700">Checkout Time (auto-filled, NYC time)</Label>
+      <div>
+        <h1 className="text-2xl font-bold text-gray-900">Request Checkout</h1>
+        <p className="text-sm text-gray-400 mt-1">{item.name}</p>
+      </div>
+
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+        <div className="bg-white rounded-xl border border-gray-200 p-5 space-y-5 shadow-sm">
+          {/* Checkout time */}
+          <div className="space-y-1.5">
+            <Label className="text-sm text-gray-600">Checkout Time</Label>
             <Input
               value={formatNY(checkoutAt)}
               disabled
-              className="bg-gray-50 text-gray-500"
+              className="bg-gray-50 text-gray-400 text-sm"
             />
           </div>
 
           {/* Return date */}
-          <div className="space-y-1">
-            <Label htmlFor="return_date" className="text-gray-700">
+          <div className="space-y-1.5">
+            <Label htmlFor="return_date" className="text-sm text-gray-600">
               Return Date <span className="text-red-500">*</span>
             </Label>
             <Input
@@ -126,103 +132,106 @@ export default function CheckoutForm({ item }: Props) {
               {...register('return_date')}
             />
             {errors.return_date && (
-              <p className="text-sm text-red-500">{errors.return_date.message}</p>
+              <p className="text-xs text-red-500">{errors.return_date.message}</p>
             )}
           </div>
 
           {/* Return time */}
-          <div className="space-y-1">
-            <Label htmlFor="return_time" className="text-gray-700">
+          <div className="space-y-1.5">
+            <Label htmlFor="return_time" className="text-sm text-gray-600">
               Return Time <span className="text-red-500">*</span>
             </Label>
-            <Input
+            <select
               id="return_time"
-              type="time"
               {...register('return_time')}
-            />
-            {errors.return_time && (
-              <p className="text-sm text-red-500">{errors.return_time.message}</p>
-            )}
-          </div>
-
-          {/* Rental contract */}
-          <div className="space-y-3 rounded-lg border border-orange-200 bg-orange-50 p-4">
-            <div className="space-y-1">
-              <Label className="text-gray-700 font-semibold">
-                Rental Contract <span className="text-red-500">*</span>
-              </Label>
-              <p className="text-sm text-gray-500">
-                Complete the rental contract and upload the signed copy before submitting.
-              </p>
-            </div>
-
-            {/* Link to contract */}
-            <a
-              href={process.env.NEXT_PUBLIC_CONTRACT_URL ?? '#'}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-sm font-medium text-orange-600 hover:text-orange-700 underline underline-offset-2"
+              className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
             >
-              <ExternalLink className="w-4 h-4" />
-              Open rental contract
-            </a>
-
-            {/* Upload signed contract */}
-            <div className="space-y-1">
-              <Label htmlFor="contract_file" className="text-gray-700">
-                Upload signed contract (PDF, JPG, or PNG)
-              </Label>
-              <div className="flex items-center gap-3">
-                <label
-                  htmlFor="contract_file"
-                  className="flex items-center gap-2 cursor-pointer rounded-lg border border-dashed border-gray-300 bg-white px-4 py-2 text-sm text-gray-600 hover:border-orange-400 hover:text-orange-600 transition-colors"
-                >
-                  {contractUploaded ? (
-                    <CheckCircle2 className="w-4 h-4 text-green-600" />
-                  ) : (
-                    <Upload className="w-4 h-4" />
-                  )}
-                  {contractFile ? contractFile.name : 'Choose file...'}
-                  <input
-                    id="contract_file"
-                    type="file"
-                    accept=".pdf,.jpg,.jpeg,.png,.webp"
-                    className="hidden"
-                    onChange={handleFileChange}
-                  />
-                </label>
-              </div>
-            </div>
-          </div>
-
-          {/* Rental agreement consent */}
-          <div className="space-y-1">
-            <label className="flex items-start gap-3 cursor-pointer group">
-              <input
-                type="checkbox"
-                className="mt-0.5 w-4 h-4 accent-orange-600 cursor-pointer"
-                {...register('rental_consent')}
-              />
-              <span className="text-sm text-gray-600 group-hover:text-gray-800 transition-colors">
-                By submitting this form, you agree to our rental terms and conditions. When you
-                rent a resource, you are responsible for its safekeeping and any damage that may
-                occur during your use. <span className="text-red-500">*</span>
-              </span>
-            </label>
-            {errors.rental_consent && (
-              <p className="text-sm text-red-500 pl-7">{errors.rental_consent.message}</p>
+              <option value="">Select a time</option>
+              {Array.from({ length: 24 * 4 }, (_, i) => {
+                const h = Math.floor(i / 4)
+                const m = (i % 4) * 15
+                const value = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`
+                const hour12 = h === 0 ? 12 : h > 12 ? h - 12 : h
+                const ampm = h < 12 ? 'AM' : 'PM'
+                const label = `${hour12}:${String(m).padStart(2, '0')} ${ampm}`
+                return <option key={value} value={value}>{label}</option>
+              })}
+            </select>
+            {errors.return_time && (
+              <p className="text-xs text-red-500">{errors.return_time.message}</p>
             )}
           </div>
+        </div>
 
-          <Button
-            type="submit"
-            disabled={submitting}
-            className="w-full bg-orange-600 hover:bg-orange-700 text-white"
+        {/* Contract section */}
+        <div className="bg-orange-50/70 rounded-xl border border-orange-200 p-5 space-y-4">
+          <div>
+            <span className="text-sm font-semibold text-gray-800">Rental Contract</span>
+            <p className="text-xs text-gray-500 mt-0.5">
+              Complete the rental contract and upload the signed copy.
+            </p>
+          </div>
+
+          <a
+            href={process.env.NEXT_PUBLIC_CONTRACT_URL ?? '#'}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 text-sm font-medium text-orange-600 hover:text-orange-700"
           >
-            {submitting ? 'Submitting...' : 'Submit Request'}
-          </Button>
-        </form>
-      </CardContent>
-    </Card>
+            <ExternalLink className="w-3.5 h-3.5" />
+            Open rental contract
+          </a>
+
+          <div className="space-y-1.5">
+            <Label htmlFor="contract_file" className="text-sm text-gray-600">
+              Upload signed contract
+            </Label>
+            <label
+              htmlFor="contract_file"
+              className="flex items-center gap-2 cursor-pointer rounded-lg border border-dashed border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-500 hover:border-orange-400 hover:text-orange-600 transition-colors w-fit"
+            >
+              {contractUploaded ? (
+                <CheckCircle2 className="w-4 h-4 text-green-600" />
+              ) : (
+                <Upload className="w-4 h-4" />
+              )}
+              {contractFile ? contractFile.name : 'Choose file (PDF, JPG, PNG)'}
+              <input
+                id="contract_file"
+                type="file"
+                accept=".pdf,.jpg,.jpeg,.png,.webp"
+                className="hidden"
+                onChange={handleFileChange}
+              />
+            </label>
+          </div>
+        </div>
+
+        {/* Consent */}
+        <label className="flex items-start gap-3 cursor-pointer group">
+          <input
+            type="checkbox"
+            className="mt-0.5 w-4 h-4 accent-orange-600 cursor-pointer rounded"
+            {...register('rental_consent')}
+          />
+          <span className="text-sm text-gray-500 group-hover:text-gray-700 transition-colors leading-relaxed">
+            By submitting this form, you agree to our rental terms and conditions. When you
+            rent a resource, you are responsible for its safekeeping and any damage that may
+            occur during your use. <span className="text-red-500">*</span>
+          </span>
+        </label>
+        {errors.rental_consent && (
+          <p className="text-xs text-red-500 pl-7">{errors.rental_consent.message}</p>
+        )}
+
+        <Button
+          type="submit"
+          disabled={submitting}
+          className="w-full bg-orange-600 hover:bg-orange-700 text-white h-10 shadow-sm"
+        >
+          {submitting ? 'Submitting...' : 'Submit Request'}
+        </Button>
+      </form>
+    </div>
   )
 }

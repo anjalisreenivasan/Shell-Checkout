@@ -26,15 +26,5 @@ export default async function CheckoutPage({
   const item = await getItem(itemId)
   if (!item) notFound()
 
-  return (
-    <div className="max-w-lg mx-auto space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900">Request Checkout</h1>
-        <p className="text-gray-500 mt-1">
-          Submitting a request for <span className="font-medium text-gray-700">{item.name}</span>
-        </p>
-      </div>
-      <CheckoutForm item={item} />
-    </div>
-  )
+  return <CheckoutForm item={item} />
 }

@@ -10,10 +10,8 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Badge } from '@/components/ui/badge'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
-import { Separator } from '@/components/ui/separator'
-import { Plus, Trash2 } from 'lucide-react'
+import { Plus, Trash2, Package } from 'lucide-react'
 import type { Item } from '@/types'
 
 const schema = z.object({
@@ -86,113 +84,102 @@ export default function BoardItemsPage() {
     }
   }
 
-  if (loading) return <div className="text-center py-20 text-gray-400">Loading...</div>
+  if (loading) {
+    return (
+      <div className="text-center py-24 text-gray-300">
+        <div className="w-5 h-5 border-2 border-gray-300 border-t-orange-600 rounded-full animate-spin mx-auto mb-3" />
+        <p className="text-sm">Loading items...</p>
+      </div>
+    )
+  }
 
   return (
-    <div className="space-y-6 max-w-3xl">
+    <div className="space-y-6 max-w-2xl">
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-semibold text-gray-800">Manage Items</h2>
-        <Button onClick={() => setShowForm(true)} className="bg-orange-600 hover:bg-orange-700 text-white">
-          <Plus className="w-4 h-4 mr-1" /> Add Item
+        <h2 className="text-lg font-semibold text-gray-800">Items</h2>
+        <Button onClick={() => setShowForm(true)} size="sm" className="bg-orange-600 hover:bg-orange-700 text-white gap-1.5">
+          <Plus className="w-3.5 h-3.5" /> Add Item
         </Button>
       </div>
 
-      {/* Add item form */}
       {showForm && (
-        <Card className="border-orange-200">
-          <CardHeader>
-            <CardTitle className="text-base">New Item</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-              <div className="space-y-1">
-                <Label>Name <span className="text-red-500">*</span></Label>
-                <Input placeholder="e.g. DSLR Camera" {...register('name')} />
-                {errors.name && <p className="text-sm text-red-500">{errors.name.message}</p>}
-              </div>
-              <div className="space-y-1">
-                <Label>Description</Label>
-                <Textarea placeholder="Optional description..." {...register('description')} />
-              </div>
-              <div className="space-y-1">
-                <Label>Quantity <span className="text-red-500">*</span></Label>
-                <Input type="number" min={1} {...register('quantity', { valueAsNumber: true })} className="w-24" />
-                {errors.quantity && <p className="text-sm text-red-500">{errors.quantity.message}</p>}
-              </div>
-              <div className="flex gap-2">
-                <Button type="submit" disabled={submitting} className="bg-orange-600 hover:bg-orange-700 text-white">
-                  {submitting ? 'Adding...' : 'Add Item'}
-                </Button>
-                <Button type="button" variant="outline" onClick={() => { setShowForm(false); reset() }}>
-                  Cancel
-                </Button>
-              </div>
-            </form>
-          </CardContent>
-        </Card>
+        <div className="bg-white rounded-xl border border-orange-200 p-5 space-y-4">
+          <span className="text-sm font-medium text-gray-800">New Item</span>
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            <div className="space-y-1.5">
+              <Label className="text-sm text-gray-600">Name <span className="text-red-500">*</span></Label>
+              <Input placeholder="e.g. DSLR Camera" {...register('name')} />
+              {errors.name && <p className="text-xs text-red-500">{errors.name.message}</p>}
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-sm text-gray-600">Description</Label>
+              <Textarea placeholder="Optional description..." {...register('description')} rows={2} />
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-sm text-gray-600">Quantity <span className="text-red-500">*</span></Label>
+              <Input type="number" min={1} {...register('quantity', { valueAsNumber: true })} className="w-20" />
+              {errors.quantity && <p className="text-xs text-red-500">{errors.quantity.message}</p>}
+            </div>
+            <div className="flex gap-2 pt-1">
+              <Button type="submit" disabled={submitting} size="sm" className="bg-orange-600 hover:bg-orange-700 text-white">
+                {submitting ? 'Adding...' : 'Add Item'}
+              </Button>
+              <Button type="button" size="sm" variant="outline" onClick={() => { setShowForm(false); reset() }}>
+                Cancel
+              </Button>
+            </div>
+          </form>
+        </div>
       )}
 
-      <Separator />
-
-      {/* Items list */}
       {items.length === 0 ? (
-        <Card>
-          <CardContent className="py-12 text-center text-gray-400">
-            No items yet. Add one above.
-          </CardContent>
-        </Card>
+        <div className="text-center py-24 text-gray-300">
+          <Package className="w-8 h-8 mx-auto mb-2" />
+          <p className="text-sm">No items yet.</p>
+        </div>
       ) : (
-        <div className="space-y-3">
+        <div className="divide-y divide-gray-100 rounded-xl border border-gray-200 bg-white overflow-hidden">
           {items.map(item => (
-            <Card key={item.id} className="border border-gray-200">
-              <CardContent className="py-4 flex items-start justify-between gap-4">
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2">
-                    <span className="font-medium text-gray-900">{item.name}</span>
-                    <Badge
-                      variant="outline"
-                      className={item.is_available
-                        ? 'bg-green-100 text-green-800 border-green-200 text-xs'
-                        : 'bg-red-100 text-red-800 border-red-200 text-xs'}
-                    >
-                      {item.is_available ? 'Available' : 'Unavailable'}
-                    </Badge>
-                  </div>
-                  {item.description && <p className="text-sm text-gray-500">{item.description}</p>}
-                  <p className="text-xs text-gray-400">Qty: {item.quantity}</p>
-                </div>
-                <div className="flex items-center gap-2 shrink-0">
-                  <Button
-                    size="sm"
+            <div key={item.id} className="flex items-center justify-between gap-4 px-4 py-3.5">
+              <div className="min-w-0 space-y-0.5">
+                <div className="flex items-center gap-2">
+                  <span className="font-medium text-sm text-gray-900 truncate">{item.name}</span>
+                  <Badge
                     variant="outline"
-                    onClick={() => toggleAvailability(item)}
+                    className={`text-[10px] shrink-0 ${item.is_available
+                      ? 'bg-green-50 text-green-700 border-green-200'
+                      : 'bg-red-50 text-red-600 border-red-200'}`}
                   >
-                    {item.is_available ? 'Mark Unavailable' : 'Mark Available'}
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                    onClick={() => setDeleteTarget(item)}
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </Button>
+                    {item.is_available ? 'Available' : 'Unavailable'}
+                  </Badge>
                 </div>
-              </CardContent>
-            </Card>
+                {item.description && <p className="text-xs text-gray-400 truncate">{item.description}</p>}
+              </div>
+              <div className="flex items-center gap-1.5 shrink-0">
+                <Button size="sm" variant="outline" className="text-xs h-7" onClick={() => toggleAvailability(item)}>
+                  {item.is_available ? 'Unavail' : 'Avail'}
+                </Button>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="text-red-500 hover:text-red-600 hover:bg-red-50 h-7 w-7 p-0"
+                  onClick={() => setDeleteTarget(item)}
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                </Button>
+              </div>
+            </div>
           ))}
         </div>
       )}
 
-      {/* Confirm delete dialog */}
       <Dialog open={!!deleteTarget} onOpenChange={() => setDeleteTarget(null)}>
-        <DialogContent>
+        <DialogContent className="max-w-sm">
           <DialogHeader>
             <DialogTitle>Remove Item</DialogTitle>
           </DialogHeader>
-          <p className="text-sm text-gray-600">
-            Are you sure you want to remove <span className="font-medium">"{deleteTarget?.name}"</span>?
-            Existing checkout history will be preserved.
+          <p className="text-sm text-gray-500">
+            Remove <span className="font-medium text-gray-700">{deleteTarget?.name}</span>? History will be preserved.
           </p>
           <DialogFooter>
             <Button variant="outline" onClick={() => setDeleteTarget(null)}>Cancel</Button>

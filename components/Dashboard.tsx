@@ -12,8 +12,8 @@ export default function Dashboard({ checkouts }: Props) {
     title: `${(c.item as { name: string })?.name} — ${(c.sheller as { name: string })?.name}`,
     start: c.checkout_at,
     end: `${c.return_date}T${c.return_time}`,
-    backgroundColor: c.status === 'returned' ? '#9ca3af' : '#ea580c',
-    borderColor: c.status === 'returned' ? '#6b7280' : '#c2410c',
+    backgroundColor: c.status === 'returned' ? '#d1d5db' : '#ea580c',
+    borderColor: c.status === 'returned' ? '#9ca3af' : '#c2410c',
     extendedProps: {
       shellerName: (c.sheller as { name: string })?.name ?? '',
       itemName: (c.item as { name: string })?.name ?? '',
@@ -24,20 +24,29 @@ export default function Dashboard({ checkouts }: Props) {
   }))
 
   return (
-    <div className="space-y-8">
-      {/* Search */}
-      <div className="space-y-3">
-        <h2 className="text-2xl font-semibold text-gray-800">Find an Item</h2>
-        <HomeSearch />
+    <div className="space-y-10">
+      <div className="space-y-2">
+        <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
+        <p className="text-sm text-gray-400">Search for a resource or see what&apos;s currently checked out.</p>
       </div>
 
-      {/* Calendar */}
-      <div className="space-y-3">
-        <h2 className="text-2xl font-semibold text-gray-800">What&apos;s Checked Out</h2>
-        <p className="text-sm text-gray-400">
-          Orange = currently out · Gray = returned
-        </p>
-        <div className="bg-white border border-gray-200 rounded-xl p-4">
+      <HomeSearch />
+
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg font-semibold text-gray-800">Checkout Calendar</h2>
+          <div className="flex items-center gap-4 text-xs text-gray-400">
+            <span className="flex items-center gap-1.5">
+              <span className="w-2.5 h-2.5 rounded-full bg-orange-600" />
+              Checked out
+            </span>
+            <span className="flex items-center gap-1.5">
+              <span className="w-2.5 h-2.5 rounded-full bg-gray-300" />
+              Returned
+            </span>
+          </div>
+        </div>
+        <div className="bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
           <CheckoutCalendar events={events} />
         </div>
       </div>
