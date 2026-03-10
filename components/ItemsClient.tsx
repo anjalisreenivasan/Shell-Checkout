@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
@@ -13,9 +13,23 @@ interface Props {
   initialQuery: string
 }
 
-export default function ItemsClient({ items, initialQuery }: Props) {
+export default function ItemsClient({ items: initialItems, initialQuery }: Props) {
   const router = useRouter()
   const [query, setQuery] = useState(initialQuery)
+  const [items, setItems] = useState<Item[]>(initialItems)
+
+  useEffect(() => {
+    const timeout = setTimeout(async () => {
+      const url = query.trim()
+        ? `/api/items?q=${encodeURIComponent(query.trim())}`
+        : '/api/items'
+      const res = await fetch(url)
+      const data = await res.json()
+      setItems(data.items ?? [])
+    }, 200)
+
+    return () => clearTimeout(timeout)
+  }, [query])
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()

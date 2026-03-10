@@ -71,10 +71,11 @@ function NavbarInner() {
   return (
     <nav className="bg-shell-cream/80 backdrop-blur-md border-b border-shell-black/5 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-14">
-          <Link href="/" className="flex items-center gap-1.5">
-            <span className="text-lg font-bold text-shell-red">Shell</span>
-            <span className="text-lg font-semibold text-shell-black">Checkout</span>
+        <div className="flex items-center justify-between h-16">
+          <Link href="/" className="flex items-center gap-2.5">
+            <img src="/startup-shell-logo-red.svg" alt="Startup Shell" className="h-7" />
+            <span className="text-xl font-bold text-shell-red">Shell</span>
+            <span className="text-xl font-semibold text-shell-black">Checkout</span>
           </Link>
 
           <div className="hidden sm:flex items-center gap-8">

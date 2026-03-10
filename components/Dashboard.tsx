@@ -45,7 +45,7 @@ export default function Dashboard({ checkouts, blockouts }: Props) {
   return (
     <div className="space-y-10">
       <div className="text-center space-y-2">
-        <h1 className="text-2xl font-bold text-shell-black">Dashboard</h1>
+        <h1 className="text-2xl font-bold text-shell-black">Resource Checkout System</h1>
         <p className="text-sm text-shell-black/40">Search for a resource or see what&apos;s currently checked out.</p>
       </div>
 

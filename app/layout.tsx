@@ -10,6 +10,9 @@ const inter = Inter({ subsets: ['latin'] })
 export const metadata: Metadata = {
   title: 'Shell Checkout',
   description: 'Startup Shell resource checkout system',
+  icons: {
+    icon: '/startup-shell-logo-red.svg',
+  },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

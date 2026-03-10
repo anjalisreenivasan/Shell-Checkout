@@ -34,7 +34,7 @@ export default function CheckoutCalendar({ events }: Props) {
 
   return (
     <>
-      <div className="[&_.fc]:text-sm [&_.fc-toolbar-title]:text-base [&_.fc-toolbar-title]:font-semibold [&_.fc-button-primary]:bg-shell-red [&_.fc-button-primary]:border-shell-red [&_.fc-button-primary]:text-xs [&_.fc-button-primary]:shadow-none [&_.fc-button-primary:hover]:bg-shell-red-dark [&_.fc-button-primary:not(:disabled):active]:bg-shell-red-dark [&_.fc-button-primary:not(:disabled).fc-button-active]:bg-shell-red-dark [&_.fc-day-today]:bg-shell-red/5 [&_.fc-event]:rounded-md [&_.fc-event]:px-1.5 [&_.fc-event]:cursor-pointer">
+      <div className="[&_.fc]:text-sm [&_.fc-toolbar-title]:text-base [&_.fc-toolbar-title]:font-semibold [&_.fc-button-primary]:bg-shell-red [&_.fc-button-primary]:border-shell-red [&_.fc-button-primary]:text-xs [&_.fc-button-primary]:shadow-none [&_.fc-button-primary:hover]:bg-shell-red-dark [&_.fc-button-primary:not(:disabled):active]:bg-shell-red-dark [&_.fc-button-primary:not(:disabled).fc-button-active]:bg-shell-red-dark [&_.fc-button-primary:focus]:!shadow-none [&_.fc-button-primary:focus]:!ring-0 [&_.fc-button:focus]:!shadow-none [&_.fc-button:focus]:!outline-none [&_.fc-button-primary:focus]:!border-shell-red [&_.fc-button-primary.fc-button-active:focus]:!border-shell-red-dark [&_.fc-day-today]:!bg-shell-red/5 [&_.fc-event]:rounded-md [&_.fc-event]:px-1.5 [&_.fc-event]:cursor-pointer">
         <FullCalendar
           plugins={[dayGridPlugin, timeGridPlugin]}
           initialView="dayGridMonth"

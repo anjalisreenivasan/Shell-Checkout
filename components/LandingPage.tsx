@@ -6,12 +6,12 @@ export default function LandingPage() {
   return (
     <div className="flex flex-col items-center justify-center min-h-[80vh] text-center px-4">
       <div className="space-y-6 max-w-md">
-        <div className="space-y-2">
-          <h1 className="text-5xl sm:text-6xl font-bold tracking-tight text-shell-black">
+        <div className="space-y-4">
+          <img src="/startup-shell-logo-red.svg" alt="Startup Shell" className="h-14 mx-auto" />
+          <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-shell-black">
             Shell <span className="text-shell-red">Checkout</span>
           </h1>
-          <div className="h-1 w-12 bg-shell-red rounded-full mx-auto" />
-          <p className="text-shell-black/40 text-base pt-2">
+          <p className="text-shell-black/40 text-base">
             Reserve and manage Startup Shell resources
           </p>
         </div>
