@@ -44,11 +44,12 @@ export default function MyRequestsPage() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ status: 'returned' }),
     })
+    const data = await res.json().catch(() => ({}))
     if (res.ok) {
       toast.success('Marked as returned. A board member will confirm it.')
       fetchCheckouts()
     } else {
-      toast.error('Failed to mark as returned.')
+      toast.error(data.error ?? 'Failed to mark as returned.')
     }
   }
 

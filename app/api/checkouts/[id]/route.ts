@@ -72,32 +72,33 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   const parsed = shellerUpdateSchema.safeParse(body)
   if (!parsed.success) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 
-  const { data: existing } = await supabaseAdmin
+  const { data: existing, error: fetchError } = await supabaseAdmin
     .from('checkouts')
-    .select('sheller_id, status')
+    .select('sheller_id, status, item_id')
     .eq('id', id)
     .single()
 
-  if (!existing || existing.sheller_id !== sheller.id) {
-    return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+  if (fetchError || !existing) {
+    return NextResponse.json({ error: fetchError?.message ?? 'Checkout not found' }, { status: fetchError ? 500 : 404 })
+  }
+  if (existing.sheller_id !== sheller.id) {
+    return NextResponse.json({ error: 'You can only mark your own checkouts as returned' }, { status: 403 })
   }
   if (existing.status !== 'approved') {
     return NextResponse.json({ error: 'Can only mark approved checkouts as returned' }, { status: 400 })
   }
 
   // Insert return record
-  const { data: item } = await supabaseAdmin
-    .from('checkouts')
-    .select('item_id')
-    .eq('id', id)
-    .single()
-
-  await supabaseAdmin.from('returns').insert({
+  const { error: insertReturnError } = await supabaseAdmin.from('returns').insert({
     request_id: id,
     sheller_id: sheller.id,
-    item_id: item?.item_id,
+    item_id: existing.item_id,
     returned_at: new Date().toISOString(),
   })
+
+  if (insertReturnError) {
+    return NextResponse.json({ error: insertReturnError.message }, { status: 500 })
+  }
 
   const { data, error } = await supabaseAdmin
     .from('checkouts')
