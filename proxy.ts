@@ -5,7 +5,7 @@ const PUBLIC_PATHS = ['/', '/sign-in', '/sign-up', '/items', '/api/auth', '/api/
 const isPublicRoute = (pathname: string) =>
   PUBLIC_PATHS.some(p => pathname === p || pathname.startsWith(`${p}/`))
 
-export async function middleware(req: NextRequest) {
+export async function proxy(req: NextRequest) {
   if (isPublicRoute(req.nextUrl.pathname)) return NextResponse.next()
 
   const sessionCookie = getSessionCookie(req)

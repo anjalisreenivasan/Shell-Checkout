@@ -22,7 +22,7 @@ export default function SignUpPage() {
     const { error: err } = await authClient.signUp.email({
       email,
       password,
-      name: name || undefined,
+      name: name || '',
     })
     setLoading(false)
     if (err) setError(err.message ?? 'Sign up failed')
