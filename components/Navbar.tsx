@@ -5,6 +5,7 @@ import { usePathname, useSearchParams } from 'next/navigation'
 import { authClient } from '@/lib/auth-client'
 import { Suspense, useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Menu, LogOut } from 'lucide-react'
 import { toast } from 'sonner'
 import DiscordPrompt from '@/components/DiscordPrompt'
@@ -83,13 +84,22 @@ function NavbarInner() {
         <div className="flex items-center gap-3">
           {isSignedIn ? (
             <div className="flex items-center gap-3">
+              <Avatar size="sm" className="size-7">
+                <AvatarImage src={session.user?.image ?? undefined} alt="" />
+                <AvatarFallback className="bg-shell-red/20 text-shell-red text-xs">
+                  {(session.user?.name ?? session.user?.email ?? '?').slice(0, 2).toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
               <span className="text-sm text-shell-black/70 truncate max-w-32">
                 {session.user?.email ?? session.user?.name}
               </span>
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => authClient.signOut()}
+                onClick={async () => {
+                  await authClient.signOut()
+                  window.location.href = '/sign-in'
+                }}
               >
                 <LogOut className="w-4 h-4" />
               </Button>
