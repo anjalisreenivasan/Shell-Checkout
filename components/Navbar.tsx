@@ -49,9 +49,9 @@ function NavbarInner() {
   }, [isSignedIn])
 
   const links = [
-    { href: '/', label: 'Home', show: true },
-    { href: '/items', label: 'Items', show: true },
-    { href: '/my-requests', label: 'My Requests', show: !!isSignedIn },
+    { href: '/', label: 'Home', show: isSignedIn },
+    { href: '/items', label: 'Items', show: isSignedIn },
+    { href: '/my-requests', label: 'My Requests', show: isSignedIn },
     { href: '/board', label: 'Board', show: isBoard },
   ].filter(l => l.show)
 
@@ -71,7 +71,7 @@ function NavbarInner() {
   return (
     <nav className="bg-shell-cream/80 backdrop-blur-md border-b border-shell-black/5 sticky top-0 z-50">
       <div className="flex max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 items-center justify-between h-16">
-        <Link href="/" className="flex items-center gap-2.5">
+        <Link href={isSignedIn ? '/' : '/sign-in'} className="flex items-center gap-2.5">
           <img src="/startup-shell-logo-red.svg" alt="Startup Shell" className="h-7" />
           <span className="text-xl font-bold text-shell-red">Shell</span>
           <span className="text-xl font-semibold text-shell-black">Checkout</span>
@@ -104,19 +104,15 @@ function NavbarInner() {
                 <LogOut className="w-4 h-4" />
               </Button>
             </div>
-          ) : (
-            <Link href="/sign-in">
-              <Button size="sm" className="bg-shell-red hover:bg-shell-red-dark text-white shadow-sm">
-                Sign In
-              </Button>
-            </Link>
-          )}
-          <button
-            className="sm:hidden p-1.5 text-shell-black/50 hover:text-shell-black"
-            onClick={() => setMobileOpen(!mobileOpen)}
-          >
-            <Menu className="w-5 h-5" />
-          </button>
+          ) : null}
+          {isSignedIn ? (
+            <button
+              className="sm:hidden p-1.5 text-shell-black/50 hover:text-shell-black"
+              onClick={() => setMobileOpen(!mobileOpen)}
+            >
+              <Menu className="w-5 h-5" />
+            </button>
+          ) : null}
         </div>
       </div>
 

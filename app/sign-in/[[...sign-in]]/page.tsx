@@ -17,26 +17,36 @@ export default function SignInPage() {
   }
 
   return (
-    <div className="flex justify-center items-center min-h-[60vh]">
-      <div className="w-full max-w-sm space-y-6">
-        <p className="text-center text-lg text-shell-black">
-          Sign in with startupshell.org email to request a resource.
-        </p>
-
-        <Button
-          type="button"
-          variant="outline"
-          className="w-full"
-          onClick={handleGoogleSignIn}
-        >
-          Sign in with Google
-        </Button>
-
-        <p className="text-center text-sm text-shell-black/60">
-          Don&apos;t have an account?{' '}
-          <Link href="/sign-up" className="text-shell-red font-medium hover:underline">
-            Sign up
+    <div className="flex flex-col items-center justify-center min-h-[70vh] px-4">
+      <div className="w-full max-w-md space-y-10 text-center">
+        <div className="flex justify-center">
+          <img src="/startup-shell-logo-red.svg" alt="Startup Shell" className="h-20 w-20" />
+        </div>
+        <div className="space-y-2">
+          <h1 className="text-4xl sm:text-5xl font-bold text-shell-black tracking-tight">
+            Shell Checkout
+          </h1>
+          <p className="text-lg text-shell-black/70">
+            Sign in with startupshell.org email to request a resource.
+          </p>
+        </div>
+        <div className="space-y-4 pt-4">
+          <Button
+            type="button"
+            size="lg"
+            className="w-full h-12 text-base bg-shell-red hover:bg-shell-red-dark text-white shadow-md"
+            onClick={handleGoogleSignIn}
+          >
+            Sign in with Google
+          </Button>
+          <Link href="/sign-up" className="block">
+            <Button type="button" variant="outline" size="lg" className="w-full h-12 text-base">
+              Sign up
+            </Button>
           </Link>
+        </div>
+        <p className="text-sm text-shell-black/50">
+          Don&apos;t have an account? Use Sign up above.
         </p>
       </div>
     </div>

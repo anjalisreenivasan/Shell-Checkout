@@ -10,19 +10,36 @@ export default function SignUpPage() {
   }
 
   return (
-    <div className="flex justify-center items-center min-h-[60vh]">
-      <div className="w-full max-w-sm space-y-6">
-        <h2 className="text-2xl font-bold text-center">Create an account</h2>
-
-        <Button type="button" variant="outline" className="w-full" onClick={handleGoogleSignUp}>
-          Sign up with Google
-        </Button>
-
-        <p className="text-center text-sm text-shell-black/60">
-          Already have an account?{' '}
-          <Link href="/sign-in" className="text-shell-red font-medium hover:underline">
-            Sign in
+    <div className="flex flex-col items-center justify-center min-h-[70vh] px-4">
+      <div className="w-full max-w-md space-y-10 text-center">
+        <div className="flex justify-center">
+          <img src="/startup-shell-logo-red.svg" alt="Startup Shell" className="h-20 w-20" />
+        </div>
+        <div className="space-y-2">
+          <h1 className="text-4xl sm:text-5xl font-bold text-shell-black tracking-tight">
+            Shell Checkout
+          </h1>
+          <p className="text-lg text-shell-black/70">
+            Sign in with startupshell.org email to request a resource.
+          </p>
+        </div>
+        <div className="space-y-4 pt-4">
+          <Button
+            type="button"
+            size="lg"
+            className="w-full h-12 text-base bg-shell-red hover:bg-shell-red-dark text-white shadow-md"
+            onClick={handleGoogleSignUp}
+          >
+            Sign up with Google
+          </Button>
+          <Link href="/sign-in" className="block">
+            <Button type="button" variant="outline" size="lg" className="w-full h-12 text-base">
+              Sign in
+            </Button>
           </Link>
+        </div>
+        <p className="text-sm text-shell-black/50">
+          Already have an account? Use Sign in above.
         </p>
       </div>
     </div>
