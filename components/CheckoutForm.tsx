@@ -61,23 +61,25 @@ export default function CheckoutForm({ item }: Props) {
         body: formData,
       })
 
-      let uploadError = 'Failed to upload contract'
+      const uploadBody = await uploadRes.text()
       if (!uploadRes.ok) {
-        try {
-          const err = await uploadRes.json()
-          uploadError = err.error ?? uploadError
-        } catch {
-          const text = await uploadRes.text()
-          if (uploadRes.status === 413 || text.includes('Request Entity Too Large') || text.includes('too large')) {
-            uploadError = 'File is too large. Try a smaller PDF or compress the file (under 10MB).'
-          } else if (text) uploadError = text.slice(0, 100)
+        let uploadError = 'Failed to upload contract'
+        if (uploadRes.status === 413 || uploadBody.includes('Request Entity Too Large') || uploadBody.includes('too large')) {
+          uploadError = 'File is too large. Try a smaller PDF or compress the file (under 10MB).'
+        } else {
+          try {
+            const err = JSON.parse(uploadBody)
+            uploadError = err.error ?? uploadError
+          } catch {
+            if (uploadBody) uploadError = uploadBody.slice(0, 100)
+          }
         }
         throw new Error(uploadError)
       }
 
       let contractPath: string
       try {
-        const data = await uploadRes.json()
+        const data = JSON.parse(uploadBody)
         contractPath = data.path
       } catch {
         throw new Error('Invalid response from upload. Please try again.')
