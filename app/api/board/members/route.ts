@@ -1,4 +1,4 @@
-import { auth } from '@clerk/nextjs/server'
+import { getAuthUserId } from '@/lib/auth'
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase'
 import { isBoardMember } from '@/lib/sheller'
@@ -11,7 +11,7 @@ const schema = z.object({
 
 // GET /api/board/members — board only
 export async function GET() {
-  const { userId } = await auth()
+  const userId = await getAuthUserId()
   if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   if (!(await isBoardMember(userId))) {
     return NextResponse.json({ error: 'Board members only' }, { status: 403 })
@@ -28,7 +28,7 @@ export async function GET() {
 
 // PATCH /api/board/members — promote/demote board members
 export async function PATCH(req: NextRequest) {
-  const { userId } = await auth()
+  const userId = await getAuthUserId()
   if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   if (!(await isBoardMember(userId))) {
     return NextResponse.json({ error: 'Board members only' }, { status: 403 })

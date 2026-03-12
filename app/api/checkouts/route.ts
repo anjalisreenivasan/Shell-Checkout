@@ -1,4 +1,4 @@
-import { auth } from '@clerk/nextjs/server'
+import { getAuthUserId } from '@/lib/auth'
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase'
 import { isBoardMember, getSheller } from '@/lib/sheller'
@@ -16,7 +16,7 @@ const checkoutSchema = z.object({
 
 // GET /api/checkouts — board gets all, sheller gets own
 export async function GET(req: NextRequest) {
-  const { userId } = await auth()
+  const userId = await getAuthUserId()
   if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const board = await isBoardMember(userId)
@@ -43,7 +43,7 @@ export async function GET(req: NextRequest) {
 
 // POST /api/checkouts — any authenticated sheller
 export async function POST(req: NextRequest) {
-  const { userId } = await auth()
+  const userId = await getAuthUserId()
   if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const sheller = await getSheller(userId)

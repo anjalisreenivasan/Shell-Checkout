@@ -7,9 +7,9 @@ const CLIENT_SECRET = process.env.DISCORD_CLIENT_SECRET
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url)
   const code = searchParams.get('code')
-  const clerkUserId = searchParams.get('state')
+  const userId = searchParams.get('state')
 
-  if (!code || !clerkUserId) {
+  if (!code || !userId) {
     return NextResponse.redirect(new URL('/?discord=error', req.url))
   }
 
@@ -51,7 +51,7 @@ export async function GET(req: NextRequest) {
       discord_handle: discordUser.username,
       discord_user_id: discordUser.id,
     })
-    .eq('clerk_user_id', clerkUserId)
+    .eq('clerk_user_id', userId)
 
   if (error) {
     console.error('Failed to save Discord info:', error)

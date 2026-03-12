@@ -1,10 +1,10 @@
-import { auth } from '@clerk/nextjs/server'
+import { getAuthUserId } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import { isBoardMember } from '@/lib/sheller'
 import BoardNav from '@/components/BoardNav'
 
 export default async function BoardLayout({ children }: { children: React.ReactNode }) {
-  const { userId } = await auth()
+  const userId = await getAuthUserId()
   if (!userId) redirect('/sign-in')
   if (!(await isBoardMember(userId))) redirect('/')
 

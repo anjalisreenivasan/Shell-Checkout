@@ -2,10 +2,10 @@
 
 import Link from 'next/link'
 import { usePathname, useSearchParams } from 'next/navigation'
-import { useUser, UserButton, SignInButton } from '@clerk/nextjs'
+import { authClient } from '@/lib/auth-client'
 import { Suspense, useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
-import { Menu } from 'lucide-react'
+import { Menu, LogOut } from 'lucide-react'
 import { toast } from 'sonner'
 import DiscordPrompt from '@/components/DiscordPrompt'
 
@@ -18,12 +18,13 @@ export default function Navbar() {
 }
 
 function NavbarInner() {
-  const { isSignedIn } = useUser()
+  const { data: session } = authClient.useSession()
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const [isBoard, setIsBoard] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
   const [showDiscordPrompt, setShowDiscordPrompt] = useState(false)
+  const isSignedIn = !!session
 
   useEffect(() => {
     const discordStatus = searchParams.get('discord')
@@ -59,9 +60,7 @@ function NavbarInner() {
       href={href}
       onClick={() => setMobileOpen(false)}
       className={`text-sm font-medium transition-colors hover:text-shell-red ${
-        pathname === href
-          ? 'text-shell-red'
-          : 'text-shell-black/50'
+        pathname === href ? 'text-shell-red' : 'text-shell-black/50'
       }`}
     >
       {label}
@@ -70,43 +69,52 @@ function NavbarInner() {
 
   return (
     <nav className="bg-shell-cream/80 backdrop-blur-md border-b border-shell-black/5 sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          <Link href="/" className="flex items-center gap-2.5">
-            <img src="/startup-shell-logo-red.svg" alt="Startup Shell" className="h-7" />
-            <span className="text-xl font-bold text-shell-red">Shell</span>
-            <span className="text-xl font-semibold text-shell-black">Checkout</span>
-          </Link>
+      <div className="flex max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 items-center justify-between h-16">
+        <Link href="/" className="flex items-center gap-2.5">
+          <img src="/startup-shell-logo-red.svg" alt="Startup Shell" className="h-7" />
+          <span className="text-xl font-bold text-shell-red">Shell</span>
+          <span className="text-xl font-semibold text-shell-black">Checkout</span>
+        </Link>
 
-          <div className="hidden sm:flex items-center gap-8">
-            {links.map(l => navLink(l.href, l.label))}
-          </div>
-
-          <div className="flex items-center gap-3">
-            {isSignedIn ? (
-              <UserButton />
-            ) : (
-              <SignInButton mode="modal">
-                <Button size="sm" className="bg-shell-red hover:bg-shell-red-dark text-white shadow-sm">
-                  Sign In
-                </Button>
-              </SignInButton>
-            )}
-            <button
-              className="sm:hidden p-1.5 text-shell-black/50 hover:text-shell-black"
-              onClick={() => setMobileOpen(!mobileOpen)}
-            >
-              <Menu className="w-5 h-5" />
-            </button>
-          </div>
+        <div className="hidden sm:flex items-center gap-8">
+          {links.map(l => navLink(l.href, l.label))}
         </div>
 
-        {mobileOpen && (
-          <div className="sm:hidden flex flex-col gap-3 pb-4 pt-1 border-t border-shell-black/5 mt-1">
-            {links.map(l => navLink(l.href, l.label))}
-          </div>
-        )}
+        <div className="flex items-center gap-3">
+          {isSignedIn ? (
+            <div className="flex items-center gap-3">
+              <span className="text-sm text-shell-black/70 truncate max-w-32">
+                {session.user?.email ?? session.user?.name}
+              </span>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => authClient.signOut()}
+              >
+                <LogOut className="w-4 h-4" />
+              </Button>
+            </div>
+          ) : (
+            <Link href="/sign-in">
+              <Button size="sm" className="bg-shell-red hover:bg-shell-red-dark text-white shadow-sm">
+                Sign In
+              </Button>
+            </Link>
+          )}
+          <button
+            className="sm:hidden p-1.5 text-shell-black/50 hover:text-shell-black"
+            onClick={() => setMobileOpen(!mobileOpen)}
+          >
+            <Menu className="w-5 h-5" />
+          </button>
+        </div>
       </div>
+
+      {mobileOpen && (
+        <div className="sm:hidden flex flex-col gap-3 pb-4 pt-1 border-t border-shell-black/5 mt-1 px-4">
+          {links.map(l => navLink(l.href, l.label))}
+        </div>
+      )}
 
       <DiscordPrompt open={showDiscordPrompt} onComplete={() => setShowDiscordPrompt(false)} />
     </nav>

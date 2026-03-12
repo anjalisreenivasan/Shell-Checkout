@@ -1,4 +1,4 @@
-import { auth } from '@clerk/nextjs/server'
+import { getAuthUserId } from '@/lib/auth'
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase'
 import { isBoardMember } from '@/lib/sheller'
@@ -6,7 +6,7 @@ import { isBoardMember } from '@/lib/sheller'
 // DELETE /api/blockouts/[id] — board only
 export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
-  const { userId } = await auth()
+  const userId = await getAuthUserId()
   if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   if (!(await isBoardMember(userId))) {
     return NextResponse.json({ error: 'Board members only' }, { status: 403 })

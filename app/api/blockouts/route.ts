@@ -1,4 +1,4 @@
-import { auth } from '@clerk/nextjs/server'
+import { getAuthUserId } from '@/lib/auth'
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase'
 import { isBoardMember, getSheller } from '@/lib/sheller'
@@ -32,7 +32,7 @@ export async function GET(req: NextRequest) {
 
 // POST /api/blockouts — board only
 export async function POST(req: NextRequest) {
-  const { userId } = await auth()
+  const userId = await getAuthUserId()
   if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   if (!(await isBoardMember(userId))) {
     return NextResponse.json({ error: 'Board members only' }, { status: 403 })

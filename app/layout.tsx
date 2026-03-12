@@ -1,6 +1,5 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
-import { ClerkProvider } from '@clerk/nextjs'
 import { Toaster } from '@/components/ui/sonner'
 import Navbar from '@/components/Navbar'
 import './globals.css'
@@ -17,8 +16,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <ClerkProvider>
-      <html lang="en">
+    <html lang="en">
         <body className={`${inter.className} min-h-screen bg-shell-cream text-shell-black`}>
           <Navbar />
           <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
@@ -27,6 +25,5 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Toaster position="top-right" richColors />
         </body>
       </html>
-    </ClerkProvider>
   )
 }

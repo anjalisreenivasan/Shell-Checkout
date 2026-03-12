@@ -1,4 +1,4 @@
-import { auth } from '@clerk/nextjs/server'
+import { getAuthUserId } from '@/lib/auth'
 import { supabaseAdmin } from '@/lib/supabase'
 import LandingPage from '@/components/LandingPage'
 import Dashboard from '@/components/Dashboard'
@@ -24,7 +24,7 @@ async function getAllBlockouts(): Promise<Blockout[]> {
 }
 
 export default async function HomePage() {
-  const { userId } = await auth()
+  const userId = await getAuthUserId()
 
   if (!userId) {
     return <LandingPage />

@@ -1,5 +1,5 @@
 import { supabaseAdmin } from '@/lib/supabase'
-import { auth } from '@clerk/nextjs/server'
+import { getAuthUserId } from '@/lib/auth'
 import { notFound, redirect } from 'next/navigation'
 import CheckoutForm from '@/components/CheckoutForm'
 import type { Item } from '@/types'
@@ -19,7 +19,7 @@ export default async function CheckoutPage({
 }: {
   params: Promise<{ itemId: string }>
 }) {
-  const { userId } = await auth()
+  const userId = await getAuthUserId()
   if (!userId) redirect('/sign-in')
 
   const { itemId } = await params

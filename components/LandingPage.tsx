@@ -1,4 +1,4 @@
-import { SignInButton } from '@clerk/nextjs'
+import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { ArrowRight } from 'lucide-react'
 
@@ -16,7 +16,7 @@ export default function LandingPage() {
           </p>
         </div>
 
-        <SignInButton mode="modal">
+        <Link href="/sign-in">
           <Button
             size="lg"
             className="bg-shell-red hover:bg-shell-red-dark text-white px-8 text-base h-12 gap-2 shadow-sm"
@@ -24,7 +24,7 @@ export default function LandingPage() {
             Sign in to get started
             <ArrowRight className="w-4 h-4" />
           </Button>
-        </SignInButton>
+        </Link>
       </div>
     </div>
   )
