@@ -7,7 +7,7 @@ export const auth = betterAuth({
   database: new Pool({
     connectionString: process.env.DATABASE_URL,
   }),
-  emailAndPassword: { enabled: true },
+  emailAndPassword: { enabled: false },
   socialProviders: {
     google: {
       clientId: process.env.GOOGLE_CLIENT_ID ?? '',

@@ -1,8 +1,35 @@
 import { supabaseAdmin } from './supabase'
 import type { Sheller } from '@/types'
 
-// Upsert a sheller record from auth user data (called on sign-in)
+// Find sheller by email (e.g. existing board member row added before first sign-in)
+async function getShellerByEmail(email: string): Promise<Sheller | null> {
+  if (!email) return null
+  const { data, error } = await supabaseAdmin
+    .from('shellers')
+    .select('*')
+    .eq('email', email)
+    .maybeSingle()
+  if (error) return null
+  return data
+}
+
+// Upsert a sheller record from auth user data (called on sign-in).
+// If a row already exists for this email (e.g. board member added manually), we link it to this user.
 export async function upsertSheller(userId: string, email: string, name: string): Promise<Sheller | null> {
+  const existingByEmail = await getShellerByEmail(email)
+  if (existingByEmail) {
+    const { data, error } = await supabaseAdmin
+      .from('shellers')
+      .update({ clerk_user_id: userId, name })
+      .eq('id', existingByEmail.id)
+      .select()
+      .single()
+    if (error) {
+      console.error('Error updating sheller:', error)
+      return null
+    }
+    return data
+  }
   const { data, error } = await supabaseAdmin
     .from('shellers')
     .upsert(
