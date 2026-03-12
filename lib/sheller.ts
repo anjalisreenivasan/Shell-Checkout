@@ -20,7 +20,7 @@ export async function upsertSheller(userId: string, email: string, name: string)
   if (existingByEmail) {
     const { data, error } = await supabaseAdmin
       .from('shellers')
-      .update({ clerk_user_id: userId, name })
+      .update({ auth_user_id: userId, name })
       .eq('id', existingByEmail.id)
       .select()
       .single()
@@ -33,8 +33,8 @@ export async function upsertSheller(userId: string, email: string, name: string)
   const { data, error } = await supabaseAdmin
     .from('shellers')
     .upsert(
-      { clerk_user_id: userId, email, name },
-      { onConflict: 'clerk_user_id', ignoreDuplicates: false }
+      { auth_user_id: userId, email, name },
+      { onConflict: 'auth_user_id', ignoreDuplicates: false }
     )
     .select()
     .single()
@@ -51,7 +51,7 @@ export async function getSheller(userId: string): Promise<Sheller | null> {
   const { data, error } = await supabaseAdmin
     .from('shellers')
     .select('*')
-    .eq('clerk_user_id', userId)
+    .eq('auth_user_id', userId)
     .single()
 
   if (error) return null
