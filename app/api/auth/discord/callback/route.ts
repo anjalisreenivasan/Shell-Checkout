@@ -5,7 +5,8 @@ const CLIENT_ID = process.env.DISCORD_CLIENT_ID
 const CLIENT_SECRET = process.env.DISCORD_CLIENT_SECRET
 
 export async function GET(req: NextRequest) {
-  const { searchParams } = new URL(req.url)
+  const url = new URL(req.url)
+  const { searchParams } = url
   const code = searchParams.get('code')
   const userId = searchParams.get('state')
 
@@ -13,8 +14,8 @@ export async function GET(req: NextRequest) {
     return NextResponse.redirect(new URL('/?discord=error', req.url))
   }
 
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'
-  const redirectUri = `${baseUrl.replace(/^http:\/\/(?!localhost)/, 'https://')}/api/auth/discord/callback`
+  // Use the actual callback URL so it matches exactly what Discord used in the auth request
+  const redirectUri = `${url.origin}/api/auth/discord/callback`
 
   const tokenRes = await fetch('https://discord.com/api/v10/oauth2/token', {
     method: 'POST',
@@ -46,16 +47,22 @@ export async function GET(req: NextRequest) {
 
   const discordUser = await userRes.json()
 
-  const { error } = await supabaseAdmin
+  const { data, error } = await supabaseAdmin
     .from('shellers')
     .update({
-      discord_handle: discordUser.username,
-      discord_user_id: discordUser.id,
+      discord_handle: discordUser.username ?? null,
+      discord_user_id: String(discordUser.id),
     })
     .eq('auth_user_id', userId)
+    .select('id')
+    .maybeSingle()
 
   if (error) {
     console.error('Failed to save Discord info:', error)
+    return NextResponse.redirect(new URL('/?discord=error', req.url))
+  }
+  if (!data) {
+    console.error('No sheller row found for auth_user_id:', userId)
     return NextResponse.redirect(new URL('/?discord=error', req.url))
   }
 
