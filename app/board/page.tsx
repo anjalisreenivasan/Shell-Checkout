@@ -191,6 +191,9 @@ export default function BoardRequestsPage() {
           {active.length === 0 ? (
             <div className="text-center py-16 text-shell-black/20 text-sm">No active checkouts.</div>
           ) : active.map(c => renderCheckout(c, <>
+            <Button size="sm" onClick={() => updateStatus(c.id, 'returned')} className="gap-1.5 bg-blue-600 hover:bg-blue-700 text-white">
+              <RotateCcw className="w-3.5 h-3.5" /> Mark as Returned
+            </Button>
             <Button size="sm" variant="outline" onClick={() => { setEditTarget(c); setEditDate(c.return_date); setEditTime(c.return_time) }} className="gap-1.5">
               <Pencil className="w-3.5 h-3.5" /> Edit Dates
             </Button>

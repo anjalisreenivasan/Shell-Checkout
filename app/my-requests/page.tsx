@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { formatNY, formatDate, formatTime } from '@/lib/timezone'
-import { Calendar, Clock, RotateCcw } from 'lucide-react'
+import { Calendar, Clock } from 'lucide-react'
 import type { Checkout } from '@/types'
 
 const STATUS_COLORS: Record<string, string> = {
@@ -38,21 +38,6 @@ export default function MyRequestsPage() {
 
   useEffect(() => { fetchCheckouts() }, [])
 
-  const handleMarkReturned = async (id: string) => {
-    const res = await fetch(`/api/checkouts/${id}`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ status: 'returned' }),
-    })
-    const data = await res.json().catch(() => ({}))
-    if (res.ok) {
-      toast.success('Marked as returned. A board member will confirm it.')
-      fetchCheckouts()
-    } else {
-      toast.error(data.error ?? 'Failed to mark as returned.')
-    }
-  }
-
   const active = checkouts.filter(c => ['pending', 'approved', 'returned'].includes(c.status))
   const history = checkouts.filter(c => ['denied', 'return_confirmed'].includes(c.status))
 
@@ -71,30 +56,22 @@ export default function MyRequestsPage() {
         <span className="font-medium text-shell-black">
           {(c.item as { name: string })?.name ?? 'Unknown Item'}
         </span>
-        <Badge variant="outline" className={`text-[10px] ${STATUS_COLORS[c.status]}`}>
-          {STATUS_LABELS[c.status]}
+        <Badge variant="outline" className={`text-[10px] ${STATUS_COLORS[c.status] ?? ''}`}>
+          {STATUS_LABELS[c.status] ?? c.status}
         </Badge>
       </div>
       <div className="flex flex-col gap-1 text-sm text-shell-black/50">
         <span className="flex items-center gap-2">
           <Calendar className="w-3.5 h-3.5 text-shell-black/20" />
-          Checked out {formatNY(c.checkout_at)}
+          Checked out {c.checkout_at ? formatNY(c.checkout_at) : '—'}
         </span>
         <span className="flex items-center gap-2">
           <Clock className="w-3.5 h-3.5 text-shell-black/20" />
-          Due {formatDate(c.return_date)} at {formatTime(c.return_time)}
+          Due {c.return_date ? formatDate(c.return_date) : '—'} at {c.return_time ? formatTime(c.return_time) : '—'}
         </span>
       </div>
       {c.status === 'approved' && (
-        <Button
-          size="sm"
-          variant="outline"
-          onClick={() => handleMarkReturned(c.id)}
-          className="gap-1.5"
-        >
-          <RotateCcw className="w-3.5 h-3.5" />
-          Mark as Returned
-        </Button>
+        <span className="text-xs text-shell-black/40 italic">A board member will mark this as returned.</span>
       )}
     </div>
   )
