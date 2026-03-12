@@ -94,8 +94,9 @@ export default function BoardRequestsPage() {
   }
 
   const pending = checkouts.filter(c => c.status === 'pending')
-  const active = checkouts.filter(c => c.status === 'approved')
-  const awaitingReturn = checkouts.filter(c => c.status === 'returned')
+  const approved = checkouts.filter(c => c.status === 'approved')
+  const denied = checkouts.filter(c => c.status === 'denied')
+  const history = checkouts.filter(c => c.status === 'return_confirmed')
 
   if (loading) {
     return (
@@ -167,8 +168,9 @@ export default function BoardRequestsPage() {
       <Tabs defaultValue="pending">
         <TabsList>
           <TabsTrigger value="pending">Pending ({pending.length})</TabsTrigger>
-          <TabsTrigger value="active">Active ({active.length})</TabsTrigger>
-          <TabsTrigger value="returns">Returns ({awaitingReturn.length})</TabsTrigger>
+          <TabsTrigger value="approved">Approved ({approved.length})</TabsTrigger>
+          <TabsTrigger value="denied">Denied ({denied.length})</TabsTrigger>
+          <TabsTrigger value="history">History ({history.length})</TabsTrigger>
         </TabsList>
 
         <TabsContent value="pending" className="space-y-3 mt-4">
@@ -187,12 +189,12 @@ export default function BoardRequestsPage() {
           </>))}
         </TabsContent>
 
-        <TabsContent value="active" className="space-y-3 mt-4">
-          {active.length === 0 ? (
-            <div className="text-center py-16 text-shell-black/20 text-sm">No active checkouts.</div>
-          ) : active.map(c => renderCheckout(c, <>
-            <Button size="sm" onClick={() => updateStatus(c.id, 'returned')} className="gap-1.5 bg-blue-600 hover:bg-blue-700 text-white">
-              <RotateCcw className="w-3.5 h-3.5" /> Mark as Returned
+        <TabsContent value="approved" className="space-y-3 mt-4">
+          {approved.length === 0 ? (
+            <div className="text-center py-16 text-shell-black/20 text-sm">No approved checkouts.</div>
+          ) : approved.map(c => renderCheckout(c, <>
+            <Button size="sm" onClick={() => handleConfirmReturn(c)} className="gap-1.5 bg-blue-600 hover:bg-blue-700 text-white">
+              <RotateCcw className="w-3.5 h-3.5" /> Confirm Return
             </Button>
             <Button size="sm" variant="outline" onClick={() => { setEditTarget(c); setEditDate(c.return_date); setEditTime(c.return_time) }} className="gap-1.5">
               <Pencil className="w-3.5 h-3.5" /> Edit Dates
@@ -200,14 +202,16 @@ export default function BoardRequestsPage() {
           </>))}
         </TabsContent>
 
-        <TabsContent value="returns" className="space-y-3 mt-4">
-          {awaitingReturn.length === 0 ? (
-            <div className="text-center py-16 text-shell-black/20 text-sm">No returns awaiting confirmation.</div>
-          ) : awaitingReturn.map(c => renderCheckout(c, <>
-            <Button size="sm" onClick={() => handleConfirmReturn(c)} className="gap-1.5 bg-blue-600 hover:bg-blue-700 text-white">
-              <RotateCcw className="w-3.5 h-3.5" /> Confirm Return
-            </Button>
-          </>))}
+        <TabsContent value="denied" className="space-y-3 mt-4">
+          {denied.length === 0 ? (
+            <div className="text-center py-16 text-shell-black/20 text-sm">No denied requests.</div>
+          ) : denied.map(c => renderCheckout(c, <></>))}
+        </TabsContent>
+
+        <TabsContent value="history" className="space-y-3 mt-4">
+          {history.length === 0 ? (
+            <div className="text-center py-16 text-shell-black/20 text-sm">No history yet.</div>
+          ) : history.map(c => renderCheckout(c, <></>))}
         </TabsContent>
       </Tabs>
 

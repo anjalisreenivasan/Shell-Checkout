@@ -38,8 +38,8 @@ export default function MyRequestsPage() {
 
   useEffect(() => { fetchCheckouts() }, [])
 
-  const active = checkouts.filter(c => ['pending', 'approved', 'returned'].includes(c.status))
-  const history = checkouts.filter(c => ['denied', 'return_confirmed'].includes(c.status))
+  const active = checkouts.filter(c => ['pending', 'approved'].includes(c.status))
+  const history = checkouts.filter(c => ['denied', 'returned', 'return_confirmed'].includes(c.status))
 
   if (loading) {
     return (

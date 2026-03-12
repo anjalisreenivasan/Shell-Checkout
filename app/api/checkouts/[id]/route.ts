@@ -6,12 +6,12 @@ import { notifyApproved, notifyDenied } from '@/lib/discord'
 import { z } from 'zod'
 
 const boardUpdateSchema = z.object({
-  status: z.enum(['approved', 'denied', 'returned', 'return_confirmed']).optional(),
+  status: z.enum(['approved', 'denied', 'return_confirmed']).optional(),
   return_date: z.string().optional(),
   return_time: z.string().optional(),
 })
 
-// PATCH /api/checkouts/[id] — only board members can update status (including mark as returned)
+// PATCH /api/checkouts/[id] — only board members can update status
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const userId = await getAuthUserId()
@@ -35,8 +35,8 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     updateData.approved_by = sheller.id
   }
 
-  // When board marks as returned, insert return record first
-  if (parsed.data.status === 'returned') {
+  // When board confirms return (approved → return_confirmed), insert return record first
+  if (parsed.data.status === 'return_confirmed') {
     const { data: existing, error: fetchError } = await supabaseAdmin
       .from('checkouts')
       .select('sheller_id, status, item_id')
@@ -46,18 +46,21 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     if (fetchError || !existing) {
       return NextResponse.json({ error: fetchError?.message ?? 'Checkout not found' }, { status: fetchError ? 500 : 404 })
     }
-    if (existing.status !== 'approved') {
-      return NextResponse.json({ error: 'Can only mark approved checkouts as returned' }, { status: 400 })
+    if (existing.status !== 'approved' && existing.status !== 'returned') {
+      return NextResponse.json({ error: 'Can only confirm return for approved checkouts' }, { status: 400 })
     }
 
-    const { error: insertReturnError } = await supabaseAdmin.from('returns').insert({
+    // Only insert return record when moving from approved (skip if already had one from 'returned')
+    if (existing.status === 'approved') {
+      const { error: insertReturnError } = await supabaseAdmin.from('returns').insert({
       request_id: id,
       sheller_id: existing.sheller_id,
       item_id: existing.item_id,
       returned_at: new Date().toISOString(),
     })
-    if (insertReturnError) {
-      return NextResponse.json({ error: insertReturnError.message }, { status: 500 })
+      if (insertReturnError) {
+        return NextResponse.json({ error: insertReturnError.message }, { status: 500 })
+      }
     }
   }
 
