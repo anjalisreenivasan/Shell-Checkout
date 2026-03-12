@@ -8,7 +8,7 @@ async function getActiveCheckouts(): Promise<Checkout[]> {
   const { data } = await supabaseAdmin
     .from('checkouts')
     .select('*, sheller:sheller_id(id, name), item:items(id, name, description)')
-    .in('status', ['approved', 'returned'])
+    .eq('status', 'approved')
     .order('checkout_at', { ascending: false })
 
   return data ?? []

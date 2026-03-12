@@ -13,8 +13,8 @@ export default function Dashboard({ checkouts, blockouts }: Props) {
     title: `${(c.item as { name: string })?.name} — ${(c.sheller as { name: string })?.name}`,
     start: c.checkout_at,
     end: `${c.return_date}T${c.return_time}`,
-    backgroundColor: c.status === 'returned' ? '#d1d5db' : '#d74034',
-    borderColor: c.status === 'returned' ? '#9ca3af' : '#ac3931',
+    backgroundColor: '#d74034',
+    borderColor: '#ac3931',
     extendedProps: {
       shellerName: (c.sheller as { name: string })?.name ?? '',
       itemName: (c.item as { name: string })?.name ?? '',
@@ -60,10 +60,6 @@ export default function Dashboard({ checkouts, blockouts }: Props) {
             <span className="flex items-center gap-1.5">
               <span className="w-2.5 h-2.5 rounded-full bg-shell-red" />
               Checked out
-            </span>
-            <span className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-full bg-gray-300" />
-              Returned
             </span>
             <span className="flex items-center gap-1.5">
               <span className="w-2.5 h-2.5 rounded-full bg-shell-black" />

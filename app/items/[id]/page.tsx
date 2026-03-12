@@ -22,7 +22,7 @@ async function getItemCheckouts(itemId: string): Promise<Checkout[]> {
     .from('checkouts')
     .select('*, sheller:sheller_id(id, name)')
     .eq('item_id', itemId)
-    .in('status', ['approved', 'returned'])
+    .eq('status', 'approved')
     .order('checkout_at', { ascending: true })
   return data ?? []
 }
