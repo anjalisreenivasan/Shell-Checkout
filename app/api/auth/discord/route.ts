@@ -11,7 +11,8 @@ export async function GET() {
     return NextResponse.json({ error: 'Discord OAuth not configured' }, { status: 500 })
   }
 
-  const redirectUri = `${process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'}/api/auth/discord/callback`
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'
+  const redirectUri = `${baseUrl.replace(/^http:\/\/(?!localhost)/, 'https://')}/api/auth/discord/callback`
 
   const params = new URLSearchParams({
     client_id: CLIENT_ID,

@@ -13,7 +13,8 @@ export async function GET(req: NextRequest) {
     return NextResponse.redirect(new URL('/?discord=error', req.url))
   }
 
-  const redirectUri = `${process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'}/api/auth/discord/callback`
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'
+  const redirectUri = `${baseUrl.replace(/^http:\/\/(?!localhost)/, 'https://')}/api/auth/discord/callback`
 
   const tokenRes = await fetch('https://discord.com/api/v10/oauth2/token', {
     method: 'POST',
@@ -51,7 +52,7 @@ export async function GET(req: NextRequest) {
       discord_handle: discordUser.username,
       discord_user_id: discordUser.id,
     })
-    .eq('clerk_user_id', userId)
+    .eq('auth_user_id', userId)
 
   if (error) {
     console.error('Failed to save Discord info:', error)
