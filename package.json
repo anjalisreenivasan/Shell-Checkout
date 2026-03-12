@@ -39,7 +39,7 @@
   },
   "overrides": {
     "glob": "^10.4.5",
-    "fetch-blob": "^4.0.0"
+    "fetch-blob": "github:node-fetch/fetch-blob#refs/pull/176/head"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
