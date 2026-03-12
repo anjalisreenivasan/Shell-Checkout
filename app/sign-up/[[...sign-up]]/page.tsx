@@ -20,7 +20,9 @@ export default function SignUpPage() {
     setError(null)
     setLoading(true)
     const { error: err } = await authClient.signUp.email({
-      body: { email, password, name: name || undefined },
+      email,
+      password,
+      name: name || undefined,
     })
     setLoading(false)
     if (err) setError(err.message ?? 'Sign up failed')

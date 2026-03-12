@@ -22,7 +22,9 @@ export default function SignInPage() {
     setError(null)
     setLoading(true)
     const { error: err } = await authClient.signIn.email({
-      body: { email, password, callbackURL: redirect },
+      email,
+      password,
+      callbackURL: redirect,
     })
     setLoading(false)
     if (err) setError(err.message ?? 'Sign in failed')
