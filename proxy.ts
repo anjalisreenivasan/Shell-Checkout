@@ -1,7 +1,7 @@
 import { getSessionCookie } from 'better-auth/cookies'
 import { NextRequest, NextResponse } from 'next/server'
 
-const PUBLIC_PATHS = ['/', '/sign-in', '/sign-up', '/items', '/api/auth', '/api/public']
+const PUBLIC_PATHS = ['/sign-in', '/sign-up', '/api/auth', '/api/public']
 const isPublicRoute = (pathname: string) =>
   PUBLIC_PATHS.some(p => pathname === p || pathname.startsWith(`${p}/`))
 

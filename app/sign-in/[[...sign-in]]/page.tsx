@@ -19,7 +19,9 @@ export default function SignInPage() {
   return (
     <div className="flex justify-center items-center min-h-[60vh]">
       <div className="w-full max-w-sm space-y-6">
-        <h2 className="text-2xl font-bold text-center">Sign in</h2>
+        <p className="text-center text-lg text-shell-black">
+          Sign in with startupshell.org email to request a resource.
+        </p>
 
         <Button
           type="button"

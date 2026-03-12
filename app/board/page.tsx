@@ -85,18 +85,22 @@ export default function BoardRequestsPage() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ status: 'return_confirmed' }),
     })
-    if (res.ok) {
+    const data = await res.json().catch(() => ({}))
+    if (res.ok && data.checkout) {
       toast.success('Return confirmed.')
-      fetchCheckouts()
+      // Update local state so item moves from Approved to History immediately
+      setCheckouts(prev => prev.map(c => c.id === checkout.id ? { ...c, ...data.checkout, status: 'return_confirmed' as const } : c))
     } else {
       toast.error('Failed to confirm return.')
+      if (res.ok) fetchCheckouts()
     }
   }
 
+  // Pending = not yet decided; Approved = checked out (only); Denied = denied (only); History = returned or return_confirmed only
   const pending = checkouts.filter(c => c.status === 'pending')
   const approved = checkouts.filter(c => c.status === 'approved')
   const denied = checkouts.filter(c => c.status === 'denied')
-  const history = checkouts.filter(c => c.status === 'return_confirmed')
+  const history = checkouts.filter(c => c.status === 'returned' || c.status === 'return_confirmed')
 
   if (loading) {
     return (
