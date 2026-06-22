@@ -1,7 +1,6 @@
 'use client'
 
 import { useSearchParams } from 'next/navigation'
-import Link from 'next/link'
 import { authClient } from '@/lib/auth-client'
 import { Button } from '@/components/ui/button'
 
@@ -27,27 +26,19 @@ export default function SignInPage() {
             Shell Checkout
           </h1>
           <p className="text-lg text-shell-black/70">
-            Sign in with startupshell.org email to request a resource.
+            Must have a startupshell.org email to request a resource.
           </p>
         </div>
-        <div className="space-y-4 pt-4">
+        <div className="pt-4">
           <Button
             type="button"
             size="lg"
             className="w-full h-12 text-base bg-shell-red hover:bg-shell-red-dark text-white shadow-md"
             onClick={handleGoogleSignIn}
           >
-            Sign in with Google
+            Sign in
           </Button>
-          <Link href="/sign-up" className="block">
-            <Button type="button" variant="outline" size="lg" className="w-full h-12 text-base">
-              Sign up
-            </Button>
-          </Link>
         </div>
-        <p className="text-sm text-shell-black/50">
-          Don&apos;t have an account? Use Sign up above.
-        </p>
       </div>
     </div>
   )
