@@ -1,12 +1,14 @@
 import { getAuthUserId } from '@/lib/auth'
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase'
-import { isBoardMember, getSheller } from '@/lib/sheller'
+import { getCurrentSheller } from '@/lib/sheller'
 import { notifyApproved, notifyDenied } from '@/lib/discord'
 import { z } from 'zod'
 
 const boardUpdateSchema = z.object({
   status: z.enum(['approved', 'denied', 'return_confirmed']).optional(),
+  pickup_date: z.string().optional(),
+  pickup_time: z.string().optional(),
   return_date: z.string().optional(),
   return_time: z.string().optional(),
 })
@@ -17,13 +19,12 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   const userId = await getAuthUserId()
   if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const board = await isBoardMember(userId)
-  const sheller = await getSheller(userId)
+  const sheller = await getCurrentSheller()
   if (!sheller) return NextResponse.json({ error: 'Sheller not found' }, { status: 404 })
 
   const body = await req.json()
 
-  if (!board) {
+  if (!sheller.is_board_member) {
     return NextResponse.json({ error: 'Only board members can update checkouts' }, { status: 403 })
   }
 

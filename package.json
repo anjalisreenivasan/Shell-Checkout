@@ -7,8 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "db:push:dev": "supabase db push --project-ref zxrpzdyokgvbpgobscvc",
-    "db:push:prod": "supabase db push --project-ref alfltfzkyrqdzkpxvzlc",
+    "db:push:dev": "supabase link --project-ref zxrpzdyokgvbpgobscvc && supabase db push --linked",
+    "db:push:prod": "supabase link --project-ref alfltfzkyrqdzkpxvzlc && supabase db push --linked",
     "db:diff": "supabase db diff",
     "db:new": "supabase migration new"
   },

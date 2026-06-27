@@ -1,10 +1,10 @@
-import { getAuthUserId } from '@/lib/auth'
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase'
+import { getCurrentSheller } from '@/lib/sheller'
 
 export async function POST(req: NextRequest) {
-  const userId = await getAuthUserId()
-  if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  const sheller = await getCurrentSheller()
+  if (!sheller) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const formData = await req.formData()
   const file = formData.get('file') as File | null
@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
   }
 
   const ext = file.name.split('.').pop()
-  const path = `${userId}/${Date.now()}.${ext}`
+  const path = `${sheller.auth_user_id}/${Date.now()}.${ext}`
 
   const { error } = await supabaseAdmin.storage
     .from('contracts')

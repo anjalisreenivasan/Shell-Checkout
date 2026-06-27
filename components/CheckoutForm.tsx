@@ -9,17 +9,24 @@ import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Textarea } from '@/components/ui/textarea'
 import { formatNY, nowInNY } from '@/lib/timezone'
 import { ExternalLink, Upload, CheckCircle2, ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 import type { Item } from '@/types'
 
 const schema = z.object({
+  pickup_date: z.string().min(1, 'Pickup date is required'),
+  pickup_time: z.string().min(1, 'Pickup time is required'),
   return_date: z.string().min(1, 'Return date is required'),
   return_time: z.string().min(1, 'Return time is required'),
+  notes: z.string().optional(),
   rental_consent: z.boolean().refine(val => val === true, {
     message: 'You must agree to the rental terms and conditions',
   }),
+}).refine(data => data.return_date >= data.pickup_date, {
+  message: 'Return date must be on or after the pickup date',
+  path: ['return_date'],
 })
 
 type FormData = z.infer<typeof schema>
@@ -27,6 +34,18 @@ type FormData = z.infer<typeof schema>
 interface Props {
   item: Item
 }
+
+const TIME_OPTIONS = Array.from({ length: 17 * 4 + 1 }, (_, i) => {
+  const h = Math.floor(i / 4) + 7
+  const m = (i % 4) * 15
+  if (h === 24 && m > 0) return null
+  const displayH = h === 24 ? 0 : h
+  const value = `${String(displayH).padStart(2, '0')}:${String(m).padStart(2, '0')}`
+  const hour12 = displayH === 0 ? 12 : displayH > 12 ? displayH - 12 : displayH
+  const ampm = displayH === 0 || displayH >= 12 ? (displayH === 0 ? 'AM' : 'PM') : 'AM'
+  const label = displayH === 0 ? '12:00 AM' : `${hour12}:${String(m).padStart(2, '0')} ${ampm}`
+  return { value, label }
+}).filter((opt): opt is { value: string; label: string } => opt !== null)
 
 export default function CheckoutForm({ item }: Props) {
   const router = useRouter()
@@ -92,10 +111,13 @@ export default function CheckoutForm({ item }: Props) {
         body: JSON.stringify({
           item_id: item.id,
           checkout_at: checkoutAt,
+          pickup_date: data.pickup_date,
+          pickup_time: data.pickup_time,
           return_date: data.return_date,
           return_time: data.return_time,
           contract_url: contractPath,
           rental_consent: data.rental_consent,
+          notes: data.notes,
         }),
       })
 
@@ -128,12 +150,46 @@ export default function CheckoutForm({ item }: Props) {
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
         <div className="bg-white rounded-xl border border-shell-black/10 p-5 space-y-5 shadow-sm">
           <div className="space-y-1.5">
-            <Label className="text-sm text-shell-black/60">Checkout Time</Label>
+            <Label className="text-sm text-shell-black/60">Request Submitted At</Label>
             <Input
               value={formatNY(checkoutAt)}
               disabled
               className="bg-shell-cream text-shell-black/40 text-sm"
             />
+          </div>
+
+          <div className="space-y-1.5">
+            <Label htmlFor="pickup_date" className="text-sm text-shell-black/60">
+              Pickup Date <span className="text-shell-red">*</span>
+            </Label>
+            <Input
+              id="pickup_date"
+              type="date"
+              min={new Date().toISOString().split('T')[0]}
+              {...register('pickup_date')}
+            />
+            {errors.pickup_date && (
+              <p className="text-xs text-shell-red">{errors.pickup_date.message}</p>
+            )}
+          </div>
+
+          <div className="space-y-1.5">
+            <Label htmlFor="pickup_time" className="text-sm text-shell-black/60">
+              Pickup Time <span className="text-shell-red">*</span>
+            </Label>
+            <select
+              id="pickup_time"
+              {...register('pickup_time')}
+              className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+            >
+              <option value="">Select a time</option>
+              {TIME_OPTIONS.map(({ value, label }) => (
+                <option key={value} value={value}>{label}</option>
+              ))}
+            </select>
+            {errors.pickup_time && (
+              <p className="text-xs text-shell-red">{errors.pickup_time.message}</p>
+            )}
           </div>
 
           <div className="space-y-1.5">
@@ -161,21 +217,24 @@ export default function CheckoutForm({ item }: Props) {
               className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
             >
               <option value="">Select a time</option>
-              {Array.from({ length: 17 * 4 + 1 }, (_, i) => {
-                const h = Math.floor(i / 4) + 7
-                const m = (i % 4) * 15
-                if (h === 24 && m > 0) return null
-                const displayH = h === 24 ? 0 : h
-                const value = `${String(displayH).padStart(2, '0')}:${String(m).padStart(2, '0')}`
-                const hour12 = displayH === 0 ? 12 : displayH > 12 ? displayH - 12 : displayH
-                const ampm = displayH === 0 || displayH >= 12 ? (displayH === 0 ? 'AM' : 'PM') : 'AM'
-                const label = displayH === 0 ? '12:00 AM' : `${hour12}:${String(m).padStart(2, '0')} ${ampm}`
-                return <option key={value} value={value}>{label}</option>
-              })}
+              {TIME_OPTIONS.map(({ value, label }) => (
+                <option key={value} value={value}>{label}</option>
+              ))}
             </select>
             {errors.return_time && (
               <p className="text-xs text-shell-red">{errors.return_time.message}</p>
             )}
+          </div>
+
+          <div className="space-y-1.5">
+            <Label htmlFor="notes" className="text-sm text-shell-black/60">
+              Notes <span className="text-shell-black/30">(optional)</span>
+            </Label>
+            <Textarea
+              id="notes"
+              placeholder="What do you need this for?"
+              {...register('notes')}
+            />
           </div>
         </div>
 

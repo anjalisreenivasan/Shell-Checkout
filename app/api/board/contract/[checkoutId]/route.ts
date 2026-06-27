@@ -1,14 +1,17 @@
 import { getAuthUserId } from '@/lib/auth'
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase'
-import { isBoardMember } from '@/lib/sheller'
+import { getCurrentSheller } from '@/lib/sheller'
 
 // GET /api/board/contract/[checkoutId] — board only, returns a signed URL to view the contract
 export async function GET(_req: NextRequest, { params }: { params: Promise<{ checkoutId: string }> }) {
   const { checkoutId } = await params
   const userId = await getAuthUserId()
   if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  if (!(await isBoardMember(userId))) {
+
+  const sheller = await getCurrentSheller()
+  if (!sheller) return NextResponse.json({ error: 'Sheller not found' }, { status: 404 })
+  if (!sheller.is_board_member) {
     return NextResponse.json({ error: 'Board members only' }, { status: 403 })
   }
 
