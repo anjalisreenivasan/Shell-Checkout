@@ -1,7 +1,7 @@
 import { getAuthUserId } from '@/lib/auth'
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase'
-import { isBoardMember } from '@/lib/sheller'
+import { getCurrentSheller } from '@/lib/sheller'
 import { z } from 'zod'
 
 const itemSchema = z.object({
@@ -34,7 +34,10 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   const userId = await getAuthUserId()
   if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  if (!(await isBoardMember(userId))) {
+
+  const sheller = await getCurrentSheller()
+  if (!sheller) return NextResponse.json({ error: 'Sheller not found' }, { status: 404 })
+  if (!sheller.is_board_member) {
     return NextResponse.json({ error: 'Board members only' }, { status: 403 })
   }
 
@@ -42,15 +45,9 @@ export async function POST(req: NextRequest) {
   const parsed = itemSchema.safeParse(body)
   if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
 
-  const { data: sheller } = await supabaseAdmin
-    .from('shellers')
-    .select('id')
-    .eq('clerk_user_id', userId)
-    .single()
-
   const { data, error } = await supabaseAdmin
     .from('items')
-    .insert({ ...parsed.data, added_by: sheller?.id })
+    .insert({ ...parsed.data, added_by: sheller.id })
     .select()
     .single()
 

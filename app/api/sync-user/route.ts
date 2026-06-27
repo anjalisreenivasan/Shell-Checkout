@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth'
-import { upsertSheller } from '@/lib/sheller'
+import { ensureShellerForAuthUser } from '@/lib/sheller-sync'
 
 // Called after sign-in to sync user into shellers table
 export async function POST() {
@@ -8,7 +8,7 @@ export async function POST() {
   if (!session?.user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { id, email, name } = session.user
-  const sheller = await upsertSheller(id, email ?? '', name ?? email ?? '')
+  const sheller = await ensureShellerForAuthUser(id, email ?? '', name ?? email ?? '')
 
   if (!sheller) return NextResponse.json({ error: 'Failed to sync user' }, { status: 500 })
 
