@@ -1,17 +1,23 @@
 import { getAuthUserId } from '@/lib/auth'
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase'
-import { isBoardMember, getSheller } from '@/lib/sheller'
+import { getCurrentSheller } from '@/lib/sheller'
 import { notifyNewRequest } from '@/lib/discord'
 import { z } from 'zod'
 
 const checkoutSchema = z.object({
   item_id: z.string().uuid(),
   checkout_at: z.string(),
+  pickup_date: z.string(),
+  pickup_time: z.string(),
   return_date: z.string(),
   return_time: z.string(),
   contract_url: z.string().optional(),
   rental_consent: z.boolean(),
+  notes: z.string().optional(),
+}).refine(data => data.return_date >= data.pickup_date, {
+  message: 'Return date must be on or after the pickup date',
+  path: ['return_date'],
 })
 
 // GET /api/checkouts — board gets all, sheller gets own
@@ -19,10 +25,10 @@ export async function GET(req: NextRequest) {
   const userId = await getAuthUserId()
   if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const board = await isBoardMember(userId)
-  const sheller = await getSheller(userId)
+  const sheller = await getCurrentSheller()
   if (!sheller) return NextResponse.json({ error: 'Sheller not found' }, { status: 404 })
 
+  const board = sheller.is_board_member
   let query = supabaseAdmin
     .from('checkouts')
     .select('*, sheller:sheller_id(id, name, email), item:items(id, name, description)')
@@ -46,7 +52,7 @@ export async function POST(req: NextRequest) {
   const userId = await getAuthUserId()
   if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const sheller = await getSheller(userId)
+  const sheller = await getCurrentSheller()
   if (!sheller) return NextResponse.json({ error: 'Sheller not found' }, { status: 404 })
 
   const body = await req.json()

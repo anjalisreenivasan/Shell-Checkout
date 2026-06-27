@@ -12,10 +12,57 @@ create extension if not exists moddatetime schema extensions;
 -- TABLES
 -- ============================================================
 
--- Shellers (synced from Clerk on first sign-in)
+-- better-auth identity tables
+create table if not exists public."user" (
+  id              text        primary key,
+  name            text        not null,
+  email           text        unique not null,
+  "emailVerified" boolean     not null,
+  image           text,
+  "createdAt"     timestamptz default CURRENT_TIMESTAMP not null,
+  "updatedAt"     timestamptz default CURRENT_TIMESTAMP not null
+);
+
+create table if not exists public."session" (
+  id          text        primary key,
+  "expiresAt" timestamptz not null,
+  token       text        unique not null,
+  "createdAt" timestamptz default CURRENT_TIMESTAMP not null,
+  "updatedAt" timestamptz not null,
+  "ipAddress" text,
+  "userAgent" text,
+  "userId"    text        references public."user"(id) on delete cascade not null
+);
+
+create table if not exists public."account" (
+  id                      text        primary key,
+  "accountId"              text        not null,
+  "providerId"             text        not null,
+  "userId"                 text        references public."user"(id) on delete cascade not null,
+  "accessToken"            text,
+  "refreshToken"           text,
+  "idToken"                text,
+  "accessTokenExpiresAt"   timestamptz,
+  "refreshTokenExpiresAt"  timestamptz,
+  scope                   text,
+  password                text,
+  "createdAt"              timestamptz default CURRENT_TIMESTAMP not null,
+  "updatedAt"              timestamptz not null
+);
+
+create table if not exists public."verification" (
+  id          text        primary key,
+  identifier  text        not null,
+  value       text        not null,
+  "expiresAt" timestamptz not null,
+  "createdAt" timestamptz default CURRENT_TIMESTAMP not null,
+  "updatedAt" timestamptz default CURRENT_TIMESTAMP not null
+);
+
+-- Shellers (synced from better-auth on first sign-in)
 create table if not exists public.shellers (
   id              uuid        default gen_random_uuid() primary key,
-  clerk_user_id   text        unique not null,
+  auth_user_id    text        unique references public."user"(id) on delete restrict not null,
   email           text        unique not null,
   name            text        not null,
   is_board_member boolean     default false not null,
@@ -42,6 +89,8 @@ create table if not exists public.checkouts (
   sheller_id   uuid        references public.shellers(id) on delete cascade not null,
   item_id      uuid        references public.items(id) on delete cascade not null,
   checkout_at  timestamptz not null,
+  pickup_date  date        not null,
+  pickup_time  time        not null,
   return_date  date        not null,
   return_time  time        not null,
   status       text        default 'pending' not null
@@ -49,6 +98,7 @@ create table if not exists public.checkouts (
   approved_by    uuid        references public.shellers(id) on delete set null,
   contract_url   text,
   rental_consent boolean     default false not null,
+  notes          text,
   created_at     timestamptz default now() not null,
   updated_at     timestamptz default now() not null
 );
@@ -79,16 +129,19 @@ alter table public.shellers  enable row level security;
 alter table public.items     enable row level security;
 alter table public.checkouts enable row level security;
 alter table public.returns   enable row level security;
+alter table public."user"         enable row level security;
+alter table public."session"      enable row level security;
+alter table public."account"      enable row level security;
+alter table public."verification" enable row level security;
 
--- Helper function: get the current sheller's row from clerk_user_id
--- (Clerk passes user ID via JWT claim "sub")
+-- Helper function: get the current sheller's row from auth_user_id
 create or replace function public.get_sheller_id()
 returns uuid
 language sql
 stable
 as $$
   select id from public.shellers
-  where clerk_user_id = auth.jwt() ->> 'sub'
+  where auth_user_id = auth.jwt() ->> 'sub'
   limit 1;
 $$;
 
@@ -100,7 +153,7 @@ stable
 as $$
   select coalesce(
     (select is_board_member from public.shellers
-     where clerk_user_id = auth.jwt() ->> 'sub'
+     where auth_user_id = auth.jwt() ->> 'sub'
      limit 1),
     false
   );
@@ -124,7 +177,7 @@ create policy "Service role can insert shellers"
 create policy "Sheller can update own row"
   on public.shellers for update
   using (
-    clerk_user_id = auth.jwt() ->> 'sub'
+    auth_user_id = auth.jwt() ->> 'sub'
     or public.is_board_member()
   );
 

@@ -7,7 +7,7 @@ export type CheckoutStatus =
 
 export interface Sheller {
   id: string
-  clerk_user_id: string
+  auth_user_id: string
   email: string
   name: string
   is_board_member: boolean
@@ -32,12 +32,15 @@ export interface Checkout {
   sheller_id: string
   item_id: string
   checkout_at: string
+  pickup_date: string
+  pickup_time: string
   return_date: string
   return_time: string
   status: CheckoutStatus
   approved_by: string | null
   contract_url: string | null
   rental_consent: boolean
+  notes: string | null
   created_at: string
   updated_at: string
   sheller?: Sheller

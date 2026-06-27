@@ -1,19 +1,19 @@
 import { getAuthUserId } from '@/lib/auth'
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase'
-import { isBoardMember, getSheller } from '@/lib/sheller'
+import { getCurrentSheller } from '@/lib/sheller'
 
 // POST /api/returns/[id]/confirm — board only
 export async function POST(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const userId = await getAuthUserId()
   if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  if (!(await isBoardMember(userId))) {
+
+  const sheller = await getCurrentSheller()
+  if (!sheller) return NextResponse.json({ error: 'Sheller not found' }, { status: 404 })
+  if (!sheller.is_board_member) {
     return NextResponse.json({ error: 'Board members only' }, { status: 403 })
   }
-
-  const sheller = await getSheller(userId)
-  if (!sheller) return NextResponse.json({ error: 'Sheller not found' }, { status: 404 })
 
   const now = new Date().toISOString()
 

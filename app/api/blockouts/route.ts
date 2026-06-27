@@ -1,7 +1,7 @@
 import { getAuthUserId } from '@/lib/auth'
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase'
-import { isBoardMember, getSheller } from '@/lib/sheller'
+import { getCurrentSheller } from '@/lib/sheller'
 import { z } from 'zod'
 
 const blockoutSchema = z.object({
@@ -34,11 +34,13 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   const userId = await getAuthUserId()
   if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  if (!(await isBoardMember(userId))) {
+
+  const sheller = await getCurrentSheller()
+  if (!sheller) return NextResponse.json({ error: 'Sheller not found' }, { status: 404 })
+  if (!sheller.is_board_member) {
     return NextResponse.json({ error: 'Board members only' }, { status: 403 })
   }
 
-  const sheller = await getSheller(userId)
   const body = await req.json()
   const parsed = blockoutSchema.safeParse(body)
   if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })

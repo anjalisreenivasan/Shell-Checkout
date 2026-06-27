@@ -24,6 +24,8 @@ export default function BoardRequestsPage() {
   const [checkouts, setCheckouts] = useState<Checkout[]>([])
   const [loading, setLoading] = useState(true)
   const [editTarget, setEditTarget] = useState<Checkout | null>(null)
+  const [editPickupDate, setEditPickupDate] = useState('')
+  const [editPickupTime, setEditPickupTime] = useState('')
   const [editDate, setEditDate] = useState('')
   const [editTime, setEditTime] = useState('')
   const [saving, setSaving] = useState(false)
@@ -57,7 +59,12 @@ export default function BoardRequestsPage() {
     const res = await fetch(`/api/checkouts/${editTarget.id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ return_date: editDate, return_time: editTime }),
+      body: JSON.stringify({
+        pickup_date: editPickupDate,
+        pickup_time: editPickupTime,
+        return_date: editDate,
+        return_time: editTime,
+      }),
     })
     setSaving(false)
     if (res.ok) {
@@ -137,13 +144,23 @@ export default function BoardRequestsPage() {
       <div className="flex flex-col gap-1 text-sm text-shell-black/50">
         <span className="flex items-center gap-2">
           <Calendar className="w-3.5 h-3.5 text-shell-black/20" />
-          Checked out {formatNY(c.checkout_at)}
+          Requested {formatNY(c.checkout_at)}
+        </span>
+        <span className="flex items-center gap-2">
+          <Calendar className="w-3.5 h-3.5 text-shell-black/20" />
+          Pickup {formatDate(c.pickup_date)} at {formatTime(c.pickup_time)}
         </span>
         <span className="flex items-center gap-2">
           <Clock className="w-3.5 h-3.5 text-shell-black/20" />
           Due {formatDate(c.return_date)} at {formatTime(c.return_time)}
         </span>
       </div>
+
+      {c.notes && (
+        <p className="text-sm text-shell-black/50 bg-shell-cream/60 rounded-lg px-3 py-2">
+          {c.notes}
+        </p>
+      )}
 
       <div className="flex items-center gap-3 text-xs">
         {c.contract_url ? (
@@ -187,7 +204,7 @@ export default function BoardRequestsPage() {
             <Button size="sm" variant="destructive" onClick={() => updateStatus(c.id, 'denied')} className="gap-1.5">
               <X className="w-3.5 h-3.5" /> Deny
             </Button>
-            <Button size="sm" variant="outline" onClick={() => { setEditTarget(c); setEditDate(c.return_date); setEditTime(c.return_time) }} className="gap-1.5">
+            <Button size="sm" variant="outline" onClick={() => { setEditTarget(c); setEditPickupDate(c.pickup_date); setEditPickupTime(c.pickup_time); setEditDate(c.return_date); setEditTime(c.return_time) }} className="gap-1.5">
               <Pencil className="w-3.5 h-3.5" /> Edit Dates
             </Button>
           </>))}
@@ -200,7 +217,7 @@ export default function BoardRequestsPage() {
             <Button size="sm" onClick={() => handleConfirmReturn(c)} className="gap-1.5 bg-blue-600 hover:bg-blue-700 text-white">
               <RotateCcw className="w-3.5 h-3.5" /> Confirm Return
             </Button>
-            <Button size="sm" variant="outline" onClick={() => { setEditTarget(c); setEditDate(c.return_date); setEditTime(c.return_time) }} className="gap-1.5">
+            <Button size="sm" variant="outline" onClick={() => { setEditTarget(c); setEditPickupDate(c.pickup_date); setEditPickupTime(c.pickup_time); setEditDate(c.return_date); setEditTime(c.return_time) }} className="gap-1.5">
               <Pencil className="w-3.5 h-3.5" /> Edit Dates
             </Button>
           </>))}
@@ -222,9 +239,17 @@ export default function BoardRequestsPage() {
       <Dialog open={!!editTarget} onOpenChange={() => setEditTarget(null)}>
         <DialogContent className="max-w-sm">
           <DialogHeader>
-            <DialogTitle>Edit Return Dates</DialogTitle>
+            <DialogTitle>Edit Pickup &amp; Return</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-2">
+            <div className="space-y-1.5">
+              <Label className="text-sm text-shell-black/60">Pickup Date</Label>
+              <Input type="date" value={editPickupDate} onChange={e => setEditPickupDate(e.target.value)} />
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-sm text-shell-black/60">Pickup Time</Label>
+              <Input type="time" value={editPickupTime} onChange={e => setEditPickupTime(e.target.value)} />
+            </div>
             <div className="space-y-1.5">
               <Label className="text-sm text-shell-black/60">Return Date</Label>
               <Input type="date" value={editDate} onChange={e => setEditDate(e.target.value)} />

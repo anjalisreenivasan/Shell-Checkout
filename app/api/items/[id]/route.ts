@@ -1,7 +1,7 @@
 import { getAuthUserId } from '@/lib/auth'
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase'
-import { isBoardMember } from '@/lib/sheller'
+import { getCurrentSheller } from '@/lib/sheller'
 import { z } from 'zod'
 
 const updateSchema = z.object({
@@ -30,7 +30,10 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   const { id } = await params
   const userId = await getAuthUserId()
   if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  if (!(await isBoardMember(userId))) {
+
+  const sheller = await getCurrentSheller()
+  if (!sheller) return NextResponse.json({ error: 'Sheller not found' }, { status: 404 })
+  if (!sheller.is_board_member) {
     return NextResponse.json({ error: 'Board members only' }, { status: 403 })
   }
 
@@ -54,7 +57,10 @@ export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ 
   const { id } = await params
   const userId = await getAuthUserId()
   if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  if (!(await isBoardMember(userId))) {
+
+  const sheller = await getCurrentSheller()
+  if (!sheller) return NextResponse.json({ error: 'Sheller not found' }, { status: 404 })
+  if (!sheller.is_board_member) {
     return NextResponse.json({ error: 'Board members only' }, { status: 403 })
   }
 

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase'
+import { getCurrentSheller } from '@/lib/sheller'
 
 const CLIENT_ID = process.env.DISCORD_CLIENT_ID
 const CLIENT_SECRET = process.env.DISCORD_CLIENT_SECRET
@@ -11,6 +12,11 @@ export async function GET(req: NextRequest) {
   const userId = searchParams.get('state')
 
   if (!code || !userId) {
+    return NextResponse.redirect(new URL('/?discord=error', req.url))
+  }
+
+  const sheller = await getCurrentSheller()
+  if (!sheller || sheller.auth_user_id !== userId) {
     return NextResponse.redirect(new URL('/?discord=error', req.url))
   }
 
@@ -53,7 +59,7 @@ export async function GET(req: NextRequest) {
       discord_handle: discordUser.username ?? null,
       discord_user_id: String(discordUser.id),
     })
-    .eq('auth_user_id', userId)
+    .eq('id', sheller.id)
     .select('id')
     .maybeSingle()
 
