@@ -7,18 +7,7 @@
 
 - [The Problem and Product Context](#the-problem--product-context)
 - [Features](#features)
-- [Member-Facing Functionality](#member-facing-functionality)
-- [Board/Admin Controls](#boardadmin-controls)
-- [Inventory Management](#inventory-management)
-- [Scheduling and Availability](#scheduling-and-availability)
-- [Notifications](#notifications)
-- [Workflow Automation](#workflow-automation)
 - [System Design and Architecture](#system-design-and-architecture)
-- [Application Layer](#application-layer)
-- [Authentication and Domain Identity](#authentication-and-domain-identity)
-- [API and Authorization Boundary](#api-and-authorization-boundary)
-- [Persistence and Data Integrity](#persistence-and-data-integrity)
-- [Integration Boundaries](#integration-boundaries)
 - [Key Engineering Decisions](#key-engineering-decisions)
 - [Demo](#demo)
 - [Tech Stack](#tech-stack)
@@ -114,7 +103,7 @@ Shell Checkout is structured as a modular monolith: the frontend, server-rendere
 - **Nonblocking Notifications:** Discord calls run after successful database writes so third-party outages do not invalidate persisted operations.
 - **Server-Side Secrets:** Database credentials, OAuth secrets, service-role keys, and bot tokens remain in environment variables and are never exposed to browser code.
 
-### Key Engineering Decisions
+## Key Engineering Decisions
 
 | Problem | Product / Engineering Decision | Tradeoff |
 | --- | --- | --- |
@@ -143,6 +132,6 @@ coming soon
 
 ## Future Improvements
 
-- **Mobile Responsiveness:** Optimize member and board workflows for smaller screens and field use.
+- **Mobile Responsiveness**
 - **Text-Based Availability Bot:** Allow members to message a chatbot to check whether an item is available and when it is expected back.
 - **Google Calendar Returns:** Create calendar events and reminders for scheduled item return dates.
