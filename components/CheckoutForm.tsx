@@ -16,6 +16,7 @@ import Link from 'next/link'
 import type { Item } from '@/types'
 
 const schema = z.object({
+  requested_item_name: z.string().optional(),
   pickup_date: z.string().min(1, 'Pickup date is required'),
   pickup_time: z.string().min(1, 'Pickup time is required'),
   return_date: z.string().min(1, 'Return date is required'),
@@ -54,7 +55,7 @@ export default function CheckoutForm({ item }: Props) {
   const [contractUploaded, setContractUploaded] = useState(false)
   const checkoutAt = nowInNY()
 
-  const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
+  const { register, handleSubmit, setError, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: { rental_consent: false },
   })
@@ -66,6 +67,12 @@ export default function CheckoutForm({ item }: Props) {
   }
 
   const onSubmit = async (data: FormData) => {
+    const requestedItemName = data.requested_item_name?.trim()
+    if (item.is_other && !requestedItemName) {
+      setError('requested_item_name', { message: 'Item name is required' })
+      return
+    }
+
     if (!contractFile) {
       toast.error('Please upload your signed rental contract before submitting.')
       return
@@ -118,6 +125,7 @@ export default function CheckoutForm({ item }: Props) {
           contract_url: contractPath,
           rental_consent: data.rental_consent,
           notes: data.notes,
+          requested_item_name: item.is_other ? requestedItemName : undefined,
         }),
       })
 
@@ -149,6 +157,22 @@ export default function CheckoutForm({ item }: Props) {
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
         <div className="bg-white rounded-xl border border-shell-black/10 p-5 space-y-5 shadow-sm">
+          {item.is_other && (
+            <div className="space-y-1.5">
+              <Label htmlFor="requested_item_name" className="text-sm text-shell-black/60">
+                Item Name <span className="text-shell-red">*</span>
+              </Label>
+              <Input
+                id="requested_item_name"
+                placeholder="What item are you requesting?"
+                {...register('requested_item_name')}
+              />
+              {errors.requested_item_name && (
+                <p className="text-xs text-shell-red">{errors.requested_item_name.message}</p>
+              )}
+            </div>
+          )}
+
           <div className="space-y-1.5">
             <Label className="text-sm text-shell-black/60">Request Submitted At</Label>
             <Input

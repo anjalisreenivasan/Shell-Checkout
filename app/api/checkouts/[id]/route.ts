@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase'
 import { getCurrentSheller } from '@/lib/sheller'
 import { notifyApproved, notifyDenied } from '@/lib/discord'
+import { checkoutItemName } from '@/lib/utils'
 import { z } from 'zod'
 
 const boardUpdateSchema = z.object({
@@ -81,7 +82,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
       .eq('id', data.sheller?.id)
       .single()
     const discordUserId = shellerRecord?.data?.discord_user_id ?? null
-    const itemName = data.item?.name ?? 'Unknown item'
+    const itemName = checkoutItemName(data, 'Unknown item')
 
     if (parsed.data.status === 'approved') {
       notifyApproved(discordUserId, itemName).catch(err =>

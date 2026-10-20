@@ -7,6 +7,7 @@ async function getItems(query?: string): Promise<Item[]> {
     .from('items')
     .select('*')
     .is('deleted_at', null)
+    .order('is_other')
     .order('name')
 
   if (query) {

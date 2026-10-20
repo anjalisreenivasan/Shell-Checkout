@@ -10,6 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { formatNY, formatDate, formatTime } from '@/lib/timezone'
 import { FileText, Calendar, Clock, User, Mail, Check, X, Pencil, RotateCcw } from 'lucide-react'
+import { checkoutItemName } from '@/lib/utils'
 import type { Checkout } from '@/types'
 
 const STATUS_COLORS: Record<string, string> = {
@@ -123,7 +124,7 @@ export default function BoardRequestsPage() {
       <div className="flex items-start justify-between gap-2 flex-wrap">
         <div className="space-y-1">
           <span className="font-medium text-shell-black">
-            {(c.item as { name: string })?.name ?? 'Unknown Item'}
+            {checkoutItemName(c)}
           </span>
           <div className="flex items-center gap-3 text-xs text-shell-black/40">
             <span className="flex items-center gap-1">

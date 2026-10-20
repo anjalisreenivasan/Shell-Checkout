@@ -3,6 +3,7 @@ import { formatNY, formatDate, formatTime } from '@/lib/timezone'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { checkoutItemName } from '@/lib/utils'
 import type { Checkout } from '@/types'
 
 async function getAllCheckouts(): Promise<Checkout[]> {
@@ -49,7 +50,7 @@ export default async function BoardHistoryPage() {
               {checkouts.map(c => (
                 <TableRow key={c.id}>
                   <TableCell className="font-medium">
-                    {(c.item as { name: string })?.name ?? '—'}
+                    {checkoutItemName(c, '—')}
                   </TableCell>
                   <TableCell>
                     <div className="text-sm">

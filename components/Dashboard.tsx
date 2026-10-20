@@ -1,5 +1,6 @@
 import HomeSearch from '@/components/HomeSearch'
 import CheckoutCalendar from '@/components/CheckoutCalendar'
+import { checkoutItemName } from '@/lib/utils'
 import type { Checkout, Blockout } from '@/types'
 
 interface Props {
@@ -10,14 +11,14 @@ interface Props {
 export default function Dashboard({ checkouts, blockouts }: Props) {
   const events = checkouts.map(c => ({
     id: c.id,
-    title: `${(c.item as { name: string })?.name} — ${(c.sheller as { name: string })?.name}`,
+    title: `${checkoutItemName(c)} — ${(c.sheller as { name: string })?.name}`,
     start: c.checkout_at,
     end: `${c.return_date}T${c.return_time}`,
     backgroundColor: '#d74034',
     borderColor: '#ac3931',
     extendedProps: {
       shellerName: (c.sheller as { name: string })?.name ?? '',
-      itemName: (c.item as { name: string })?.name ?? '',
+      itemName: checkoutItemName(c, ''),
       returnDate: c.return_date,
       returnTime: c.return_time,
       status: c.status,

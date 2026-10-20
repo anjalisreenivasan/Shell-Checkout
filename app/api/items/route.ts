@@ -19,6 +19,7 @@ export async function GET(req: NextRequest) {
     .from('items')
     .select('*')
     .is('deleted_at', null)
+    .order('is_other')
     .order('created_at', { ascending: false })
 
   if (query) {

@@ -22,6 +22,7 @@ export interface Item {
   description: string | null
   quantity: number
   is_available: boolean
+  is_other: boolean
   added_by: string | null
   created_at: string
   deleted_at: string | null
@@ -41,6 +42,7 @@ export interface Checkout {
   contract_url: string | null
   rental_consent: boolean
   notes: string | null
+  requested_item_name: string | null
   created_at: string
   updated_at: string
   sheller?: Sheller

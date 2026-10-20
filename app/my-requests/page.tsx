@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { formatNY, formatDate, formatTime } from '@/lib/timezone'
 import { Calendar, Clock } from 'lucide-react'
+import { checkoutItemName } from '@/lib/utils'
 import type { Checkout } from '@/types'
 
 const STATUS_COLORS: Record<string, string> = {
@@ -54,7 +55,7 @@ export default function MyRequestsPage() {
     <div key={c.id} className="bg-white rounded-xl border border-shell-black/10 p-4 space-y-3">
       <div className="flex items-start justify-between gap-2">
         <span className="font-medium text-shell-black">
-          {(c.item as { name: string })?.name ?? 'Unknown Item'}
+          {checkoutItemName(c)}
         </span>
         <Badge variant="outline" className={`text-[10px] ${STATUS_COLORS[c.status] ?? ''}`}>
           {STATUS_LABELS[c.status] ?? c.status}

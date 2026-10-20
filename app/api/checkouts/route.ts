@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase'
 import { getCurrentSheller } from '@/lib/sheller'
 import { notifyNewRequest } from '@/lib/discord'
+import { checkoutItemName } from '@/lib/utils'
 import { z } from 'zod'
 
 const checkoutSchema = z.object({
@@ -15,6 +16,7 @@ const checkoutSchema = z.object({
   contract_url: z.string().optional(),
   rental_consent: z.boolean(),
   notes: z.string().optional(),
+  requested_item_name: z.string().trim().max(200).optional(),
 }).refine(data => data.return_date >= data.pickup_date, {
   message: 'Return date must be on or after the pickup date',
   path: ['return_date'],
@@ -59,9 +61,23 @@ export async function POST(req: NextRequest) {
   const parsed = checkoutSchema.safeParse(body)
   if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
 
+  const { data: item } = await supabaseAdmin
+    .from('items')
+    .select('is_other')
+    .eq('id', parsed.data.item_id)
+    .is('deleted_at', null)
+    .single()
+  if (!item) return NextResponse.json({ error: 'Item not found' }, { status: 404 })
+
+  // requested_item_name is required for the "Other" item and ignored for everything else
+  const requestedItemName = item.is_other ? parsed.data.requested_item_name || null : null
+  if (item.is_other && !requestedItemName) {
+    return NextResponse.json({ error: 'Item name is required' }, { status: 400 })
+  }
+
   const { data, error } = await supabaseAdmin
     .from('checkouts')
-    .insert({ ...parsed.data, sheller_id: sheller.id, status: 'pending' })
+    .insert({ ...parsed.data, requested_item_name: requestedItemName, sheller_id: sheller.id, status: 'pending' })
     .select('*, sheller:sheller_id(id, name, email), item:items(id, name, description)')
     .single()
 
@@ -71,7 +87,7 @@ export async function POST(req: NextRequest) {
   notifyNewRequest(
     sheller.name,
     sheller.discord_handle ?? null,
-    data.item?.name ?? 'Unknown item',
+    checkoutItemName(data, 'Unknown item'),
     parsed.data.return_date,
     parsed.data.return_time,
     boardUrl,

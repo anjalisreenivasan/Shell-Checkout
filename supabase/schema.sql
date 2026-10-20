@@ -78,10 +78,14 @@ create table if not exists public.items (
   description  text,
   quantity     integer     default 1 not null check (quantity >= 1),
   is_available boolean     default true not null,
+  is_other     boolean     default false not null,  -- the single "Other" item (request something not listed)
   added_by     uuid        references public.shellers(id) on delete set null,
   created_at   timestamptz default now() not null,
   deleted_at   timestamptz
 );
+
+-- Only one "Other" item can exist
+create unique index items_single_other_idx on public.items (is_other) where is_other;
 
 -- Checkouts (checkout requests submitted by shellers)
 create table if not exists public.checkouts (
@@ -99,6 +103,7 @@ create table if not exists public.checkouts (
   contract_url   text,
   rental_consent boolean     default false not null,
   notes          text,
+  requested_item_name text,  -- what the sheller asked for when item is "Other"
   created_at     timestamptz default now() not null,
   updated_at     timestamptz default now() not null
 );
