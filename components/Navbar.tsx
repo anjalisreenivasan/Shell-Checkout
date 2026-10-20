@@ -122,7 +122,7 @@ function NavbarInner() {
         </div>
       )}
 
-      <DiscordPrompt open={showDiscordPrompt} onComplete={() => setShowDiscordPrompt(false)} />
+      <DiscordPrompt open={showDiscordPrompt} />
     </nav>
   )
 }

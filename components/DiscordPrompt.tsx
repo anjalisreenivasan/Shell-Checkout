@@ -5,10 +5,9 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 
 interface Props {
   open: boolean
-  onComplete: () => void
 }
 
-export default function DiscordPrompt({ open, onComplete }: Props) {
+export default function DiscordPrompt({ open }: Props) {
   const handleLink = () => {
     window.location.href = '/api/auth/discord'
   }
@@ -20,9 +19,9 @@ export default function DiscordPrompt({ open, onComplete }: Props) {
           <DialogTitle>Link your Discord</DialogTitle>
         </DialogHeader>
         <p className="text-sm text-shell-black/50">
-          We use Discord to notify you about your checkout requests. Sign in with Discord so we can message you when your request is approved or denied.
+          Discord is required to use Shell Checkout. Sign in with Discord so we can notify you when your checkout request is approved or denied.
         </p>
-        <div className="space-y-3 pt-2">
+        <div className="pt-2">
           <Button
             onClick={handleLink}
             className="w-full bg-[#5865F2] hover:bg-[#4752C4] text-white"
@@ -32,12 +31,6 @@ export default function DiscordPrompt({ open, onComplete }: Props) {
             </svg>
             Sign in with Discord
           </Button>
-          <button
-            onClick={onComplete}
-            className="w-full text-sm text-shell-black/40 hover:text-shell-black/60 transition-colors"
-          >
-            Skip for now
-          </button>
         </div>
       </DialogContent>
     </Dialog>
