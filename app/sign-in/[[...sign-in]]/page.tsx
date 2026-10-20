@@ -19,7 +19,7 @@ export default function SignInPage() {
     <div className="flex flex-col items-center justify-center min-h-[70vh] px-4">
       <div className="w-full max-w-md space-y-10 text-center">
         <div className="flex justify-center">
-          <img src="/startup-shell-logo-red.svg" alt="Startup Shell" className="h-20 w-20" />
+          <img src="/startup-shell-logo-red.svg" alt="Startup Shell" className="h-auto w-full" />
         </div>
         <div className="space-y-2">
           <h1 className="text-4xl sm:text-5xl font-bold text-shell-black tracking-tight">

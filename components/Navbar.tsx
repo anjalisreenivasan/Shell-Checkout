@@ -72,9 +72,11 @@ function NavbarInner() {
     <nav className="bg-shell-cream/80 backdrop-blur-md border-b border-shell-black/5 sticky top-0 z-50">
       <div className="flex max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 items-center justify-between h-16">
         <Link href={isSignedIn ? '/' : '/sign-in'} className="flex items-center gap-2.5">
-          <img src="/startup-shell-logo-red.svg" alt="Startup Shell" className="h-7" />
-          <span className="text-xl font-bold text-shell-red">Shell</span>
-          <span className="text-xl font-semibold text-shell-black">Checkout</span>
+          <img src="/startup-shell-logo-red.svg" alt="Startup Shell" className="h-9 w-auto" />
+          <span className="flex items-baseline gap-1">
+            <span className="text-xl font-bold text-shell-red">Shell</span>
+            <span className="text-xl font-semibold text-shell-black">Checkout</span>
+          </span>
         </Link>
 
         <div className="hidden sm:flex items-center gap-8">
