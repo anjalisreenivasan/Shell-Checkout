@@ -1,0 +1,31 @@
+google cloud console using startup shell email btw 
+discord dev portal too
+
+API
+React / Next.js page
+        ↓
+fetch() request
+        ↓
+Next.js API endpoint
+        ↓
+middleware / auth check
+        ↓
+RBAC permission check
+        ↓
+Postgres / Supabase query
+        ↓
+JSON response
+        ↓
+React UI updates
+
+Good actual metrics to measure:
+
+Metric	What it proves	How to measure
+Average request response time	Discord alerts made approvals faster	Time from request_submitted_at to approved_at/denied_at
+Number of missed/stale requests	Requests are no longer forgotten	Count requests pending longer than 24/48/72 hours
+Checkout overdue rate	Return dates improved accountability	Count checkouts past return_date without marked return
+Resource lookup time	Members no longer need to ask board manually	Small before/after user survey or observe time to find availability
+Checkout volume	People are actually using it	Count submitted requests per week/month
+Board admin actions	Board is using the management tooling	Count approvals, denials, blockouts, item edits
+Inventory traceability	Better tracking of who had what	Percent of checked-out items with owner + return date + history
+Reduction in manual messages	Less coordination overhead	Compare Discord/DM questions before vs after, or survey board

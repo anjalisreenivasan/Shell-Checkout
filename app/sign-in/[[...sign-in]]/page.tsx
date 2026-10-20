@@ -16,7 +16,7 @@ export default function SignInPage() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[70vh] px-4">
+    <div className="flex min-h-[calc(100vh-5rem)] flex-col items-center justify-center px-4">
       <div className="w-full max-w-md space-y-10 text-center">
         <div className="flex justify-center">
           <img src="/startup-shell-logo-red.svg" alt="Startup Shell" className="h-auto w-full" />

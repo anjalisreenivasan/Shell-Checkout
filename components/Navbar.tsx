@@ -48,6 +48,8 @@ function NavbarInner() {
       })
   }, [isSignedIn])
 
+  if (pathname.startsWith('/sign-in')) return null
+
   const links = [
     { href: '/', label: 'Home', show: isSignedIn },
     { href: '/items', label: 'Items', show: isSignedIn },
